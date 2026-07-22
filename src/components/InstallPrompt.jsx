@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Icon from './Icon.jsx';
 
 const DISMISS_KEY = 'exam-master-install-dismissed';
 
@@ -71,7 +72,7 @@ export default function InstallPrompt() {
   if (deferred) {
     return (
       <div className="install-banner" role="dialog" aria-label="앱 설치 안내">
-        <span className="ib-icon">📲</span>
+        <span className="ib-icon"><Icon name="phone" size={22} /></span>
         <div className="ib-body">
           <div className="ib-title">시험 마스터를 앱으로 설치하세요</div>
           <div className="ib-desc">홈 화면에서 바로 열고, 오프라인에서도 사용할 수 있어요</div>
@@ -93,7 +94,7 @@ export default function InstallPrompt() {
         <button className="ib-close" onClick={close} aria-label="닫기">
           ×
         </button>
-        📲 <strong>앱처럼 쓰기</strong> — 사파리 하단 <strong>공유 버튼</strong>을 누르고{' '}
+        <strong>앱처럼 쓰기</strong> — 사파리 하단 <strong>공유 버튼</strong>을 누르고{' '}
         <strong>‘홈 화면에 추가’</strong>를 선택하면 홈 화면에서 바로 열려요.
       </div>
     );

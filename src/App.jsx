@@ -91,19 +91,25 @@ export default function App() {
   const dday = state.examDate ? diffDays(todayKey(), state.examDate) : null;
 
   return (
-    <>
-      <div className="ambient" aria-hidden="true">
-        <span className="blob b1" />
-        <span className="blob b2" />
-        <span className="blob b3" />
-      </div>
       <div className="app">
         <header className="app-header">
         <div className="brand" onClick={() => state.plan && goto('calendar')}>
-          <span className="brand-logo">🎯</span>
+          <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+            <rect width="40" height="40" rx="11" fill="var(--primary)" />
+            <circle cx="20" cy="18" r="9" fill="none" stroke="#fff" strokeWidth="3" opacity="0.9" />
+            <circle cx="20" cy="18" r="3" fill="#fff" />
+            <path
+              d="M14 26l4 4 8-9"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           <div>
             <h1>시험 마스터</h1>
-            <p>커뮤니티 꿀팁 모아보고, 시험일까지 알아서 공부 캘린더</p>
+            <p>커뮤니티 꿀팁 모아보고, 시험일까지 공부 캘린더</p>
           </div>
         </div>
         {exam && state.examDate && (
@@ -203,11 +209,10 @@ export default function App() {
 
       <footer className="app-footer">
         <p>
-          ⚠️ 앱에 표시되는 시험 일정과 커뮤니티 게시글은 데모 데이터입니다. 실제 접수 일정은 큐넷 등
+          앱에 표시되는 시험 일정과 커뮤니티 게시글은 데모 데이터입니다. 실제 접수 일정은 큐넷 등
           공식 기관에서 꼭 확인하세요.
         </p>
       </footer>
       </div>
-    </>
   );
 }

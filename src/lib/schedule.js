@@ -74,17 +74,17 @@ export function nextActionReminder(meta, todayKey) {
     if (status.state === 'before') {
       return {
         tone: status.dday <= 3 ? 'urgent' : 'info',
-        text: `📌 ${meta.stageLabel} 원서접수 시작까지 D-${status.dday} (${formatShort(meta.regStart)}~${formatShort(meta.regEnd)})`,
+        text: `${meta.stageLabel} 원서접수 시작까지 D-${status.dday} (${formatShort(meta.regStart)}~${formatShort(meta.regEnd)})`,
       };
     }
     if (status.state === 'open') {
       return {
         tone: 'urgent',
-        text: `📌 지금 ${meta.stageLabel} 원서접수 기간! ${formatShort(meta.regEnd)} 마감 — 잊지 말고 접수하세요`,
+        text: `지금 ${meta.stageLabel} 원서접수 기간! ${formatShort(meta.regEnd)} 마감 — 잊지 말고 접수하세요`,
       };
     }
     if (status.state === 'closed') {
-      return { tone: 'muted', text: `ℹ️ ${meta.stageLabel} 원서접수는 마감되었어요 (${formatShort(meta.regEnd)})` };
+      return { tone: 'muted', text: `${meta.stageLabel} 원서접수는 마감되었어요 (${formatShort(meta.regEnd)})` };
     }
   }
   return null;

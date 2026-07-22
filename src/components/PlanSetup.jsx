@@ -21,7 +21,7 @@ export default function PlanSetup({ exam, examDate, tips, initial, onBack, onGen
     const ratio = totalHours / merged.recommendedTotalHours;
     if (ratio < 0.7) return { level: 'low', text: '선택한 전략 대비 공부량이 부족해요. 하루 시간을 늘리거나 휴식일을 줄여보세요.' };
     if (ratio > 1.6) return { level: 'high', text: '전략 대비 여유가 커요. 회독 수를 늘려 더 탄탄하게 준비할 수 있어요.' };
-    return { level: 'ok', text: '선택한 전략과 잘 맞는 공부량이에요! 👍' };
+    return { level: 'ok', text: '선택한 전략과 잘 맞는 공부량이에요.' };
   }, [totalHours, merged.recommendedTotalHours]);
 
   const toggleRest = (dow) => {
@@ -125,7 +125,7 @@ export default function PlanSetup({ exam, examDate, tips, initial, onBack, onGen
           disabled={!canGenerate}
           onClick={() => onGenerate({ dailyMinutes, restDays })}
         >
-          🗓️ 공부 캘린더 자동 생성
+          공부 캘린더 만들기
         </button>
       </div>
     </section>

@@ -54,7 +54,7 @@ export default function ExamPicker({ selectedId, onSelect }) {
             >
               <div className="exam-card-top">
                 <h3>{exam.name}</h3>
-                {exam.popular && <span className="badge hot">🔥 인기</span>}
+                {exam.popular && <span className="badge hot">인기</span>}
               </div>
               <p className="exam-organizer">{exam.organizer}</p>
               <div className="exam-meta">

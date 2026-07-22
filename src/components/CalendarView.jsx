@@ -5,6 +5,7 @@ import { buildICS } from '../lib/ics.js';
 import { celebrate, burstAt } from '../lib/confetti.js';
 import ProgressRing from './ProgressRing.jsx';
 import AnimatedNumber from './AnimatedNumber.jsx';
+import Icon from './Icon.jsx';
 import {
   todayKey,
   fromKey,
@@ -152,15 +153,19 @@ export default function CalendarView({
             <span className="ring-sub">완료</span>
           </ProgressRing>
         </div>
-        {reminder && <div className={`reg-reminder ${reminder.tone}`}>{reminder.text}</div>}
+        {reminder && (
+          <div className={`reg-reminder ${reminder.tone}`}>
+            <Icon name="bell" size={16} /> {reminder.text}
+          </div>
+        )}
         <div className="cal-actions">
           {overdueCount > 0 && (
             <button className="btn warn" onClick={onReplan}>
-              ⏰ 밀린 {overdueCount}개 일정 재분배
+              <Icon name="refresh" size={15} /> 밀린 {overdueCount}개 재분배
             </button>
           )}
           <button className="btn primary" onClick={handleExport}>
-            📅 캘린더 내보내기 (.ics)
+            <Icon name="download" size={16} /> 캘린더 내보내기
           </button>
           <label className="ics-opt">
             <input
@@ -230,7 +235,7 @@ export default function CalendarView({
                   onClick={() => setSelectedDate(cell)}
                 >
                   <span className="cal-date">{fromKey(cell).getDate()}</span>
-                  {isExam && <span className="cal-exam-mark">🎯 시험</span>}
+                  {isExam && <span className="cal-exam-mark">시험</span>}
                   {cellMarks.map((m, i) => (
                     <span key={i} className={`cal-mark ${MARK_KIND[m.kind]?.cls}`}>
                       {MARK_KIND[m.kind]?.short}
@@ -263,18 +268,18 @@ export default function CalendarView({
         <div className="panel day-detail">
           <h3>{formatKorean(selectedDate)}</h3>
           {selectedDate === examDate && (
-            <p className="exam-day-note">🎯 시험 당일! 일찍 자고 수험표·신분증 챙기세요.</p>
+            <p className="exam-day-note">시험 당일! 일찍 자고 수험표·신분증 챙기세요.</p>
           )}
           {(marks[selectedDate] ?? []).map((m, i) => (
             <p key={i} className={`sched-note ${MARK_KIND[m.kind]?.cls}`}>
-              {m.kind === 'reg-start' && '📝 원서접수 시작일 — 큐넷에서 시험 신청하세요.'}
-              {m.kind === 'reg-end' && '⏰ 원서접수 마감일 — 오늘까지 신청해야 해요!'}
-              {m.kind === 'pass' && '🏆 합격자 발표일'}
+              {m.kind === 'reg-start' && '원서접수 시작일 — 큐넷에서 시험을 신청하세요.'}
+              {m.kind === 'reg-end' && '원서접수 마감일 — 오늘까지 신청해야 해요!'}
+              {m.kind === 'pass' && '합격자 발표일'}
             </p>
           ))}
           {!selectedDay && selectedDate !== examDate && (marks[selectedDate] ?? []).length === 0 && (
             <p className="empty-note">
-              이 날은 배정된 공부가 없어요. {selectedDate < today ? '' : '휴식일이거나 계획 범위 밖이에요. 🌴'}
+              이 날은 배정된 공부가 없어요.{selectedDate < today ? '' : ' 휴식일이거나 계획 범위 밖이에요.'}
             </p>
           )}
           {selectedDay && (

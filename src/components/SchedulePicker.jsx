@@ -71,9 +71,9 @@ export default function SchedulePicker({ exam, value, onBack, onNext }) {
 
       <div className="source-line">
         {data.live ? (
-          <span className="live-badge on">🟢 큐넷 실시간 일정</span>
+          <span className="live-badge on"><span className="live-dot" /> 큐넷 실시간 일정</span>
         ) : (
-          <span className="live-badge off">📄 예시 일정</span>
+          <span className="live-badge off">예시 일정</span>
         )}
         {!data.live && (
           <span className="source-note">
@@ -103,15 +103,15 @@ export default function SchedulePicker({ exam, value, onBack, onNext }) {
                     <strong>{session.round}</strong>
                     <span className={`stage-tag ${stage.key}`}>{stage.label}</span>
                   </div>
-                  <p className="stage-exam">🗓️ 시험 {formatKorean(stage.exam.start)}</p>
+                  <p className="stage-exam">시험 {formatKorean(stage.exam.start)}</p>
                   <div className="stage-lines">
-                    <span className={`reg-chip ${reg.state}`}>📝 {reg.label}</span>
+                    <span className={`reg-chip ${reg.state}`}>{reg.label}</span>
                     {stage.reg && (
                       <span className="reg-range">
-                        접수 {formatShort(stage.reg.start)} ~ {formatShort(stage.reg.end)}
+                        접수 {formatShort(stage.reg.start)}~{formatShort(stage.reg.end)}
                       </span>
                     )}
-                    {stage.pass && <span className="pass-chip">🏆 발표 {formatShort(stage.pass)}</span>}
+                    {stage.pass && <span className="pass-chip">발표 {formatShort(stage.pass)}</span>}
                   </div>
                 </div>
                 <span className={`dday-badge ${examDday <= 7 ? 'urgent' : ''}`}>D-{examDday}</span>
@@ -138,7 +138,7 @@ export default function SchedulePicker({ exam, value, onBack, onNext }) {
       </div>
 
       <p className="notice">
-        ⚠️ {data.live ? '큐넷 일정도 변동될 수 있으니' : '위 일정은 예시이며'} 실제 접수·시험일은{' '}
+        {data.live ? '큐넷 일정도 변동될 수 있으니' : '위 일정은 예시이며'} 실제 접수·시험일은{' '}
         <strong>{exam.organizer}</strong> 공식 공고에서 꼭 확인하세요.
       </p>
 

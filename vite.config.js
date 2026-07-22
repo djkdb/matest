@@ -21,8 +21,8 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#f4f5fb',
-        theme_color: '#5b5bd6',
+        background_color: '#ffffff',
+        theme_color: '#3182f6',
         categories: ['education', 'productivity'],
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
@@ -31,14 +31,24 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // 앱 셸 프리캐시 → 오프라인에서도 실행. 큐넷 API 응답은 캐시하지 않음.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // 앱 셸 프리캐시 → 오프라인에서도 실행. 폰트는 용량이 커서 런타임 캐시로.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/qnet'),
             handler: 'NetworkOnly',
+          },
+          {
+            // Pretendard 폰트: 처음 로드 후 캐시 → 이후 오프라인에서도 표시
+            urlPattern: ({ url }) => url.pathname.startsWith('/fonts/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'fonts',
+              expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
           },
         ],
       },

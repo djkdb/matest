@@ -104,7 +104,7 @@ export default function TipsBoard({ exam, selectedIds, onChange, onBack, onNext 
               </div>
               <footer className="tip-foot">
                 <span className="tip-stats">
-                  👍 {tip.upvotes.toLocaleString()} · 💬 {tip.comments}
+                  추천 {tip.upvotes.toLocaleString()} · 댓글 {tip.comments}
                 </span>
                 <button className={`btn small ${on ? 'primary' : ''}`} onClick={() => toggle(tip.id)}>
                   {on ? '✓ 선택됨' : '이 전략 담기'}
@@ -112,7 +112,7 @@ export default function TipsBoard({ exam, selectedIds, onChange, onBack, onNext 
               </footer>
               {tip.strategy && (
                 <div className="strategy-bar" title={`전략: ${tip.strategy.name}`}>
-                  <span className="strategy-name">📋 {tip.strategy.name}</span>
+                  <span className="strategy-name">{tip.strategy.name}</span>
                   <span className="weight-bar">
                     {PHASES.map((p) => (
                       <i
