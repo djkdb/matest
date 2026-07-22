@@ -123,6 +123,23 @@ h1, h2, h3 {
   line-height: 1.3;
 }
 
+/* ─── 접근성: 키보드 포커스 링 (마우스/터치엔 안 보임) ─── */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ─── 접근성: 아이콘/작은 컨트롤 최소 터치 타깃(≈44px, WCAG 2.5.8) ─── */
+.cal-nav .btn,
+.ib-close {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .app {
   max-width: 720px;
   margin: 0 auto;

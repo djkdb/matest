@@ -194,13 +194,13 @@ export default function CalendarView({
       <div className="cal-body">
         <div className="panel cal-grid-panel">
           <div className="cal-nav">
-            <button className="btn small" onClick={() => moveMonth(-1)}>
+            <button className="btn small" onClick={() => moveMonth(-1)} aria-label="이전 달">
               ←
             </button>
-            <strong>
+            <strong aria-live="polite">
               {monthCursor.year}년 {monthCursor.month + 1}월
             </strong>
-            <button className="btn small" onClick={() => moveMonth(1)}>
+            <button className="btn small" onClick={() => moveMonth(1)} aria-label="다음 달">
               →
             </button>
           </div>
@@ -220,9 +220,19 @@ export default function CalendarView({
               const allDone = day && day.unitIds.every((id) => doneSet.has(id));
               const phases = day ? [...new Set(day.unitIds.map((id) => unitMap.get(id)?.phase))] : [];
               const cellMarks = marks[cell] ?? [];
+              const cellLabel = [
+                formatKorean(cell),
+                isExam && '시험일',
+                ...cellMarks.map((m) => MARK_KIND[m.kind]?.short),
+                day && (allDone ? '공부 완료' : `공부 ${formatMinutes(day.totalMinutes)}`),
+              ]
+                .filter(Boolean)
+                .join(', ');
               return (
                 <button
                   key={cell}
+                  aria-label={cellLabel}
+                  aria-pressed={cell === selectedDate}
                   className={[
                     'cal-cell',
                     day ? 'has-plan' : '',
