@@ -150,22 +150,12 @@ public/
 - **테스트 알림** 버튼 / 카테고리 토글(공부·스트릭·원서접수) / 리마인더 시각 설정.
 - **서비스워커 push·notificationclick 핸들러**(`public/push-sw.js`, 워크박스 `importScripts`로 병합) — 서버가 푸시를 보내면 알림이 뜨고 클릭 시 앱이 포커스됩니다.
 
-**앱을 완전히 닫은 상태의 실시간 푸시**는 웹 표준상 반드시 **푸시 서버(VAPID)**가 필요합니다(클라이언트만으로는 불가능). 연동 순서:
+**앱을 완전히 닫은 상태의 실시간 푸시**는 웹 표준상 반드시 **푸시 서버(VAPID)**가 필요합니다(클라이언트만으로는 불가능). 이를 위한 **Cloudflare Workers 발송 서버가 [`server/`](./server)에 포함**되어 있습니다 — 무료 티어(상업적 사용 허용) + Cron으로 앱을 닫아도 리마인더를 보냅니다.
 
-1. VAPID 키 발급: `npx web-push generate-vapid-keys`
-2. 공개키를 `.env`의 `VITE_VAPID_PUBLIC_KEY`로 주입 → `subscribeToPush()`가 구독 생성
-3. 구독 객체를 서버에 저장하고, 발송 시:
+연동: `server/`에서 `npm run gen-keys`로 VAPID 키 생성 → KV·secret 설정 후 `npm run deploy` → 앱 `.env.local`에 `VITE_VAPID_PUBLIC_KEY`, `VITE_PUSH_API` 입력. 자세한 5단계는 [`server/README.md`](./server/README.md) 참고. 클라이언트는 `syncSubscription()`/`sendHeartbeat()`(`src/lib/push.js`)로 구독·학습상태를 서버와 동기화하며, `VITE_PUSH_API`가 없으면 조용히 비활성화됩니다.
 
-```js
-// 서버(Node) 예시 — 앱에는 포함되지 않음
-import webpush from 'web-push';
-webpush.setVapidDetails('mailto:you@example.com', PUBLIC_KEY, PRIVATE_KEY);
-await webpush.sendNotification(subscription, JSON.stringify({
-  title: '원서접수 D-3', body: '실기 원서접수가 3일 뒤 시작돼요', url: '/',
-}));
-```
-
-> iOS는 **홈 화면에 설치한 PWA**에서만 웹 푸시를 지원합니다(Safari 16.4+).
+- **발송 비용은 0원**(FCM/APNs/Mozilla 게이트웨이), 서버는 무료 티어로 시작 → 규모 커지면 과금.
+- iOS는 **홈 화면에 설치한 PWA**에서만 웹 푸시를 지원합니다(Safari 16.4+).
 
 ## 커뮤니티 데이터에 대해
 

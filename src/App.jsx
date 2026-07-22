@@ -14,7 +14,7 @@ import InstallPrompt from './components/InstallPrompt.jsx';
 import { celebrate } from './lib/confetti.js';
 import { STREAK_MIN_SECONDS, daySeconds, computeStreak } from './lib/study.js';
 import { dueReminders } from './lib/reminders.js';
-import { permissionState, showNotification } from './lib/push.js';
+import { permissionState, showNotification, syncSubscription, sendHeartbeat } from './lib/push.js';
 import { isReviewable, buildReviews, mergeReviews, removeReviewsForSource } from './lib/review.js';
 
 const STEPS = ['exam', 'date', 'tips', 'setup', 'calendar'];
@@ -77,6 +77,33 @@ export default function App() {
   }, [state.step]);
 
   const handleNotifyChange = (notifyPrefs) => setState((s) => ({ ...s, notifyPrefs }));
+
+  // 푸시 서버(VITE_PUSH_API)가 있으면 구독·설정을 동기화 (없으면 내부에서 no-op)
+  useEffect(() => {
+    if (!state.notifyPrefs?.enabled) return;
+    syncSubscription({
+      prefs: state.notifyPrefs,
+      examMeta: state.examMeta,
+      remindTime: state.notifyPrefs.remindTime,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    state.notifyPrefs?.enabled,
+    state.notifyPrefs?.study,
+    state.notifyPrefs?.streak,
+    state.notifyPrefs?.reg,
+    state.notifyPrefs?.remindTime,
+    state.examMeta,
+  ]);
+
+  // 오늘 공부 기록이 생기면 서버에 하트비트(스트릭 위험 알림 판단용)
+  useEffect(() => {
+    if (!state.notifyPrefs?.enabled) return;
+    const today = todayKey();
+    const streak = computeStreak(state.studyLog, today);
+    if (streak.todayStudied) sendHeartbeat({ lastStudyDate: today, streakCount: streak.count });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.studyLog]);
 
   const exam = useMemo(() => (state.examId ? getExam(state.examId) : null), [state.examId]);
 
