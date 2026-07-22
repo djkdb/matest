@@ -12,7 +12,9 @@ import PlanSetup from './components/PlanSetup.jsx';
 import CalendarView from './components/CalendarView.jsx';
 import InstallPrompt from './components/InstallPrompt.jsx';
 import { celebrate } from './lib/confetti.js';
-import { STREAK_MIN_SECONDS, daySeconds } from './lib/study.js';
+import { STREAK_MIN_SECONDS, daySeconds, computeStreak } from './lib/study.js';
+import { dueReminders } from './lib/reminders.js';
+import { permissionState, showNotification } from './lib/push.js';
 
 const STEPS = ['exam', 'date', 'tips', 'setup', 'calendar'];
 
@@ -27,6 +29,14 @@ const INITIAL = {
   completed: [],
   studyLog: {}, // { 'YYYY-MM-DD': seconds } 공부 시간 기록 (계획과 무관하게 누적)
   timerStartedAt: null, // 진행 중 타이머의 시작 시각(epoch ms) — 새로고침에도 복원
+  notifyPrefs: {
+    enabled: false,
+    study: true,
+    streak: true,
+    reg: true,
+    remindTime: '20:00',
+    lastNotified: {}, // { id: 'YYYY-MM-DD' } 하루 1회 중복 방지
+  },
 };
 
 export default function App() {
@@ -38,6 +48,32 @@ export default function App() {
   useEffect(() => {
     saveState(state);
   }, [state]);
+
+  // 앱을 열어 캘린더로 들어올 때, 조건에 맞는 로컬 리마인더를 표시 (백엔드 불필요)
+  useEffect(() => {
+    if (state.step !== 'calendar' || !state.plan) return;
+    const prefs = state.notifyPrefs;
+    if (!prefs || !prefs.enabled || permissionState() !== 'granted') return;
+    const today = todayKey();
+    const streak = computeStreak(state.studyLog, today);
+    const due = dueReminders(prefs, {
+      examMeta: state.examMeta,
+      streakCount: streak.count,
+      todayStudied: streak.todayStudied,
+      today,
+      hour: new Date().getHours(),
+    });
+    if (!due.length) return;
+    const marked = { ...(prefs.lastNotified || {}) };
+    due.forEach((n) => {
+      showNotification(n.title, { body: n.body });
+      marked[n.id] = today;
+    });
+    setState((s) => ({ ...s, notifyPrefs: { ...s.notifyPrefs, lastNotified: marked } }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.step]);
+
+  const handleNotifyChange = (notifyPrefs) => setState((s) => ({ ...s, notifyPrefs }));
 
   const exam = useMemo(() => (state.examId ? getExam(state.examId) : null), [state.examId]);
 
@@ -219,6 +255,8 @@ export default function App() {
             timerStartedAt={state.timerStartedAt}
             onTimerStart={handleTimerStart}
             onTimerStop={handleTimerStop}
+            notifyPrefs={state.notifyPrefs}
+            onNotifyChange={handleNotifyChange}
             onToggleUnit={handleToggleUnit}
             onReplan={handleReplan}
             onReset={handleReset}

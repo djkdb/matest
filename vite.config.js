@@ -33,8 +33,10 @@ export default defineConfig({
       workbox: {
         // 앱 셸 프리캐시 → 오프라인에서도 실행. 폰트는 용량이 커서 런타임 캐시로.
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // 푸시/알림 클릭 핸들러를 생성 SW에 합침
+        importScripts: ['push-sw.js'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//, /push-sw\.js$/],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/qnet'),

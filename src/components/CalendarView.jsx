@@ -6,6 +6,7 @@ import { celebrate, burstAt } from '../lib/confetti.js';
 import ProgressRing from './ProgressRing.jsx';
 import AnimatedNumber from './AnimatedNumber.jsx';
 import StudyTimer from './StudyTimer.jsx';
+import NotifySettings from './NotifySettings.jsx';
 import Icon from './Icon.jsx';
 import {
   todayKey,
@@ -48,6 +49,8 @@ export default function CalendarView({
   timerStartedAt,
   onTimerStart,
   onTimerStop,
+  notifyPrefs,
+  onNotifyChange,
   onToggleUnit,
   onReplan,
   onReset,
@@ -201,6 +204,8 @@ export default function CalendarView({
           </p>
         )}
       </div>
+
+      <NotifySettings prefs={notifyPrefs} onChange={onNotifyChange} />
 
       <div className="cal-body">
         <div className="panel cal-grid-panel">
