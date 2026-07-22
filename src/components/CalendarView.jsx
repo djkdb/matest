@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { PHASES, PHASE_MAP } from '../lib/planner.js';
 import { scheduleMarks, nextActionReminder } from '../lib/schedule.js';
+import { buildICS } from '../lib/ics.js';
 import {
   todayKey,
   fromKey,
@@ -11,6 +12,19 @@ import {
   formatMinutes,
   WEEKDAY_LABELS,
 } from '../lib/date.js';
+
+/** .ics 문자열을 파일로 다운로드 (브라우저 전용) */
+function downloadICS(filename, content) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 const MARK_KIND = {
   'reg-start': { cls: 'reg', short: '접수 시작' },
@@ -44,6 +58,21 @@ export default function CalendarView({
     const d = fromKey(dayMap.has(today) ? today : firstPlanDay);
     return { year: d.getFullYear(), month: d.getMonth() };
   });
+  const [includeStudy, setIncludeStudy] = useState(true);
+
+  const handleExport = () => {
+    const studyDays = includeStudy
+      ? plan.days
+          .filter((d) => d.unitIds.length > 0)
+          .map((d) => ({
+            date: d.date,
+            minutesLabel: formatMinutes(d.totalMinutes),
+            tasks: d.unitIds.map((id) => unitMap.get(id)?.title).filter(Boolean),
+          }))
+      : [];
+    const ics = buildICS({ examName: exam.name, examMeta, studyDays });
+    downloadICS(`${exam.name}_공부일정.ics`, ics);
+  };
 
   // 진행률: 완료 유닛 시간 / 전체 유닛 시간
   const progress = useMemo(() => {
@@ -106,10 +135,25 @@ export default function CalendarView({
               ⏰ 밀린 {overdueCount}개 일정 재분배
             </button>
           )}
+          <button className="btn primary" onClick={handleExport}>
+            📅 캘린더 내보내기 (.ics)
+          </button>
+          <label className="ics-opt">
+            <input
+              type="checkbox"
+              checked={includeStudy}
+              onChange={(e) => setIncludeStudy(e.target.checked)}
+            />
+            공부 일정도 포함
+          </label>
           <button className="btn subtle" onClick={onReset}>
             새 계획 만들기
           </button>
         </div>
+        <p className="ics-hint">
+          내려받은 .ics 파일을 구글·애플·아웃룩 캘린더에서 열면 원서접수 시작·마감, 시험일, 합격발표에
+          알림이 자동 등록돼요.
+        </p>
         {plan.unassigned.length > 0 && (
           <p className="fit-note low">
             시간이 부족해 {plan.unassigned.length}개 학습 유닛이 배정되지 못했어요. 하루 공부 시간을

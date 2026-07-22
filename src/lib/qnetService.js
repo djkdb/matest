@@ -103,6 +103,8 @@ export function sessionsFromResponse(json, exam) {
 }
 
 function buildUrl(exam, year) {
+  // 기술자격은 getQualExamSchdList, 전문자격 등은 exam.qnet.operation 으로 지정.
+  const operation = exam.qnet.operation || 'getQualExamSchdList';
   const params = new URLSearchParams({
     serviceKey: API_KEY,
     dataFormat: 'json',
@@ -111,7 +113,8 @@ function buildUrl(exam, year) {
     numOfRows: '100',
     pageNo: '1',
   });
-  return `${BASE}/getQualExamSchdList?${params.toString()}`;
+  if (exam.qnet.jmCd) params.set('jmCd', exam.qnet.jmCd);
+  return `${BASE}/${operation}?${params.toString()}`;
 }
 
 /**
