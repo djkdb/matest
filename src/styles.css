@@ -19,11 +19,19 @@
   padding: 0;
 }
 
+html {
+  /* 모바일 브라우저 주소창 등장/소멸 시 레이아웃 안정 */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.55;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
@@ -34,7 +42,9 @@ button {
 .app {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 20px 16px 60px;
+  /* 노치/홈 인디케이터 세이프 에어리어 반영 */
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(60px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
 }
 
 /* ─── 헤더 ─── */
@@ -1117,6 +1127,78 @@ button {
   color: var(--ink-soft);
 }
 
+/* ─── 앱 설치(홈 화면 추가) 배너 ─── */
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(90deg, #5b5bd6, #8b5cf6);
+  color: #fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.install-banner .ib-icon {
+  font-size: 24px;
+}
+
+.install-banner .ib-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.install-banner .ib-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.install-banner .ib-desc {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.install-banner .btn.ib-cta {
+  background: #fff;
+  color: var(--primary);
+  border: none;
+  white-space: nowrap;
+}
+
+.install-banner .ib-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  opacity: 0.85;
+  padding: 4px;
+}
+
+.ios-guide {
+  background: #eef2ff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+.ios-guide strong {
+  color: var(--primary);
+}
+
+.ios-guide .ib-close {
+  float: right;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
 /* ─── 반응형 ─── */
 @media (max-width: 860px) {
   .cal-body {
@@ -1133,5 +1215,51 @@ button {
 
   .cal-min {
     display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-header {
+    align-items: flex-start;
+  }
+
+  .brand h1 {
+    font-size: 19px;
+  }
+
+  .brand p {
+    font-size: 12px;
+  }
+
+  /* 스텝 네비: 가로 스크롤 대신 라벨 축약 */
+  .step-item .step-label {
+    display: none;
+  }
+
+  .step-item.active .step-label {
+    display: inline;
+  }
+
+  .exam-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn,
+  .chip {
+    /* 터치 타깃 확보 */
+    min-height: 40px;
+  }
+
+  .cal-cell {
+    min-height: 54px;
+    padding: 4px;
+  }
+
+  .cal-date {
+    font-size: 13px;
+  }
+
+  .btn-row.sticky-bottom {
+    bottom: max(12px, env(safe-area-inset-bottom));
   }
 }

@@ -2,6 +2,8 @@
 
 자격증 시험 준비의 시작과 끝. **시험과 시험일을 고르면**, 커뮤니티 곳곳(디시인사이드 · 네이버 카페 · 인스타그램 · 유튜브)의 **합격 꿀팁을 모아 보여주고**, 마음에 드는 전략을 골라 **남은 기간 공부량에 맞는 학습 캘린더를 자동 생성**해주는 앱입니다.
 
+📱 **휴대폰 앱(PWA)** 으로 설치하면 홈 화면 아이콘으로 바로 열리고, 전체화면으로 실행되며, 오프라인에서도 동작합니다. (설치 방법은 아래 [휴대폰 앱으로 설치](#-휴대폰-앱으로-설치-pwa) 참고)
+
 ## 사용 흐름
 
 1. **시험 선택** — 정보처리기사, 컴활 1급, 한국사능력검정, 토익, SQLD, 전기기사, 산업안전기사, 공인중개사 등 검색·카테고리 필터
@@ -13,13 +15,32 @@
 
 모든 상태는 `localStorage`에 저장되어 새로고침해도 유지됩니다.
 
+## 📱 휴대폰 앱으로 설치 (PWA)
+
+이 앱은 **PWA(Progressive Web App)** 라서 스토어 없이 홈 화면에 설치할 수 있습니다.
+설치하면 주소창 없는 전체화면으로 실행되고, 서비스워커가 앱 셸을 캐시해 **오프라인에서도** 열립니다.
+
+- **안드로이드 / 크롬**: 접속하면 상단에 "홈 화면에 추가" 배너가 뜹니다. 누르거나, 브라우저 메뉴 → "앱 설치 / 홈 화면에 추가"를 선택하세요.
+- **아이폰 / 사파리**: 하단 **공유 버튼** → **"홈 화면에 추가"** 를 선택하세요. (iOS는 자동 설치 배너를 지원하지 않아 앱이 안내 문구를 표시합니다.)
+
+구성 요소:
+
+- `vite.config.js` 의 `VitePWA` — 매니페스트(`manifest.webmanifest`)와 서비스워커(`sw.js`) 자동 생성, 앱 셸 프리캐시, 새 버전 자동 업데이트(`registerType: 'autoUpdate'`). 큐넷 API(`/api/qnet`)는 캐시하지 않습니다(`NetworkOnly`).
+- `public/icons/` — 앱 아이콘(192·512·maskable), `public/apple-touch-icon.png`
+- `src/components/InstallPrompt.jsx` — 설치 배너/ iOS 안내
+- `index.html` — `theme-color`, `apple-mobile-web-app-*`, `viewport-fit=cover`(노치 세이프 에어리어) 메타
+- 모바일 레이아웃: 세이프 에어리어 패딩, 가로 스크롤 방지, 터치 타깃 확대, 캘린더 세로 스택
+
+> 참고: 서비스워커는 HTTPS(또는 localhost)에서만 동작합니다. `npm run build && npm run preview` 로 로컬 확인하거나, HTTPS로 배포하세요.
+
 ## 실행
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm test         # 계획 생성 엔진 단위 테스트
-npm run build    # 프로덕션 빌드
+npm run dev      # http://localhost:5173 (개발용 — PWA 서비스워커는 비활성)
+npm test         # 단위 테스트 (계획 엔진 · 큐넷 파싱 · ICS 생성)
+npm run build    # 프로덕션 빌드 (매니페스트 + 서비스워커 생성)
+npm run preview  # 빌드 결과 로컬 확인 — PWA 설치/오프라인 테스트는 여기서
 ```
 
 ## 프로젝트 구조
@@ -43,7 +64,13 @@ src/
     ├── SchedulePicker.jsx   # 2단계: 회차/원서접수/시험일 (큐넷 연동)
     ├── TipsBoard.jsx        # 3단계: 꿀팁 피드 + 전략 선택
     ├── PlanSetup.jsx        # 4단계: 공부량 설정
-    └── CalendarView.jsx     # 5단계: 월간 캘린더 + 진행 체크 + 재분배
+    ├── CalendarView.jsx     # 5단계: 월간 캘린더 + 진행 체크 + 재분배 + .ics 내보내기
+    └── InstallPrompt.jsx    # 홈 화면 설치 배너 / iOS 안내 (PWA)
+
+public/
+├── icons/                  # PWA 앱 아이콘 (192·512·maskable)
+├── apple-touch-icon.png    # iOS 홈 화면 아이콘
+└── favicon-32.png
 ```
 
 ## 계획 생성 엔진 (`src/lib/planner.js`)

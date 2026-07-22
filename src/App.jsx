@@ -10,6 +10,7 @@ import SchedulePicker from './components/SchedulePicker.jsx';
 import TipsBoard from './components/TipsBoard.jsx';
 import PlanSetup from './components/PlanSetup.jsx';
 import CalendarView from './components/CalendarView.jsx';
+import InstallPrompt from './components/InstallPrompt.jsx';
 
 const STEPS = ['exam', 'date', 'tips', 'setup', 'calendar'];
 
@@ -105,6 +106,8 @@ export default function App() {
           </div>
         )}
       </header>
+
+      <InstallPrompt />
 
       {state.step !== 'calendar' && (
         <StepNav
