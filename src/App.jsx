@@ -17,6 +17,7 @@ const INITIAL = {
   step: 'exam',
   examId: null,
   examDate: null,
+  examMeta: null, // { roundLabel, stageLabel, regStart, regEnd, examStart, examEnd, passDate, live }
   selectedTipIds: [],
   settings: { dailyMinutes: 120, restDays: [] },
   plan: null,
@@ -126,7 +127,9 @@ export default function App() {
               patch({
                 examId,
                 step: 'date',
-                ...(changed ? { examDate: null, selectedTipIds: [], plan: null, completed: [] } : {}),
+                ...(changed
+                  ? { examDate: null, examMeta: null, selectedTipIds: [], plan: null, completed: [] }
+                  : {}),
               });
             }}
           />
@@ -137,7 +140,7 @@ export default function App() {
             exam={exam}
             value={state.examDate}
             onBack={() => goto('exam')}
-            onNext={(examDate) => patch({ examDate, step: 'tips' })}
+            onNext={(examDate, examMeta) => patch({ examDate, examMeta, step: 'tips' })}
           />
         )}
 
@@ -166,6 +169,7 @@ export default function App() {
           <CalendarView
             exam={exam}
             examDate={state.examDate}
+            examMeta={state.examMeta}
             plan={state.plan}
             completed={state.completed}
             tips={selectedTips}

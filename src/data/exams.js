@@ -1,6 +1,28 @@
 // 주요 자격증 데이터베이스.
-// scheduleNote: 앱에 내장된 일정은 데모용 참고 데이터이며, 실제 접수는 반드시
-// 공식 기관(큐넷, 대한상공회의소 등) 공고를 확인해야 한다.
+//
+// 시험 일정 구조
+// ─────────────
+// - qnet: 큐넷(공공데이터포털) 국가기술자격 시험일정 API로 실시간 조회가 가능한
+//   종목은 { qualgbCd, grade } 를 갖는다. qualgbCd='T'(국가기술자격),
+//   grade 는 응답 description 을 필터링할 등급 키워드('기사'|'기능사' 등).
+//   qnet 이 null 이면 큐넷 API 대상이 아니므로(어학·상공회의소 등) 항상 아래
+//   scheduleFallback 을 사용한다.
+// - scheduleFallback: 라이브 조회 실패/미설정 시 사용하는 예시 회차 데이터.
+//   실제 서비스에서는 큐넷 API 응답으로 대체된다(src/lib/qnetService.js).
+//
+// 회차(session) 구조 — 필기/실기 등 단계(stage)별 원서접수·시험·발표 일정:
+//   {
+//     id, round,                       // 회차 라벨
+//     stages: [{
+//       key, label,                    // 'written'|'practical'|'sitting', '필기'|'실기'|...
+//       reg:  { start, end } | null,   // 원서접수 기간 (null = 상시접수)
+//       exam: { start, end },          // 시험 기간 (start 를 D-day 기준으로 사용)
+//       pass: 'YYYY-MM-DD' | null,     // 합격(예정)발표일
+//     }],
+//   }
+//
+// ⚠️ scheduleFallback 의 날짜는 데모용 예시다. 실제 접수·시험 일정은 반드시
+//    시행 기관(큐넷, 대한상공회의소 등) 공식 공고를 확인해야 한다.
 
 export const CATEGORIES = [
   { id: 'it', label: 'IT · 개발' },
@@ -30,9 +52,28 @@ export const EXAMS = [
     ],
     pastExamRounds: 8,
     mockRounds: 3,
-    upcoming: [
-      { label: '2026 정기기사 3회 필기 (예시)', date: '2026-08-09' },
-      { label: '2026 정기기사 3회 실기 (예시)', date: '2026-10-18' },
+    qnet: { qualgbCd: 'T', grade: '기사' },
+    scheduleFallback: [
+      {
+        id: 'jeongcheogi-2026-3',
+        round: '2026년 정기 기사 3회',
+        stages: [
+          {
+            key: 'written',
+            label: '필기',
+            reg: { start: '2026-06-16', end: '2026-06-19' },
+            exam: { start: '2026-08-09', end: '2026-08-27' },
+            pass: '2026-09-10',
+          },
+          {
+            key: 'practical',
+            label: '실기',
+            reg: { start: '2026-09-22', end: '2026-09-25' },
+            exam: { start: '2026-11-01', end: '2026-11-16' },
+            pass: '2026-12-24',
+          },
+        ],
+      },
     ],
   },
   {
@@ -46,9 +87,34 @@ export const EXAMS = [
     subjects: ['컴퓨터 일반', '스프레드시트', '데이터베이스'],
     pastExamRounds: 10,
     mockRounds: 4,
-    upcoming: [
-      { label: '상시검정 (매주 시행, 예시)', date: '2026-08-01' },
-      { label: '상시검정 (매주 시행, 예시)', date: '2026-08-15' },
+    qnet: null,
+    scheduleFallback: [
+      {
+        id: 'comhwal1-2026-sangsi-a',
+        round: '2026 상시검정 (필기)',
+        stages: [
+          {
+            key: 'sitting',
+            label: '필기',
+            reg: null, // 상시 접수 (시험일 기준 보통 시험 4일 전까지 접수)
+            exam: { start: '2026-08-01', end: '2026-08-01' },
+            pass: '2026-08-01', // 필기 상시검정은 시험 직후 합격 확인
+          },
+        ],
+      },
+      {
+        id: 'comhwal1-2026-sangsi-b',
+        round: '2026 상시검정 (실기)',
+        stages: [
+          {
+            key: 'sitting',
+            label: '실기',
+            reg: null,
+            exam: { start: '2026-08-16', end: '2026-08-16' },
+            pass: '2026-08-28',
+          },
+        ],
+      },
     ],
   },
   {
@@ -62,9 +128,34 @@ export const EXAMS = [
     subjects: ['전근대사 (선사~조선)', '근대사 (개항기~일제강점기)', '현대사'],
     pastExamRounds: 6,
     mockRounds: 2,
-    upcoming: [
-      { label: '제78회 (예시)', date: '2026-08-08' },
-      { label: '제79회 (예시)', date: '2026-10-24' },
+    qnet: null,
+    scheduleFallback: [
+      {
+        id: 'hanguksa-78',
+        round: '제78회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '시험',
+            reg: { start: '2026-07-06', end: '2026-07-13' },
+            exam: { start: '2026-08-08', end: '2026-08-08' },
+            pass: '2026-08-21',
+          },
+        ],
+      },
+      {
+        id: 'hanguksa-79',
+        round: '제79회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '시험',
+            reg: { start: '2026-09-21', end: '2026-09-28' },
+            exam: { start: '2026-10-24', end: '2026-10-24' },
+            pass: '2026-11-06',
+          },
+        ],
+      },
     ],
   },
   {
@@ -78,10 +169,34 @@ export const EXAMS = [
     subjects: ['LC Part 1-2', 'LC Part 3-4', 'RC Part 5-6 (문법·어휘)', 'RC Part 7 (독해)'],
     pastExamRounds: 10,
     mockRounds: 5,
-    upcoming: [
-      { label: '제530회 (예시)', date: '2026-07-26' },
-      { label: '제531회 (예시)', date: '2026-08-16' },
-      { label: '제532회 (예시)', date: '2026-08-30' },
+    qnet: null,
+    scheduleFallback: [
+      {
+        id: 'toeic-531',
+        round: '제531회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '정기시험',
+            reg: { start: '2026-07-13', end: '2026-08-04' },
+            exam: { start: '2026-08-16', end: '2026-08-16' },
+            pass: '2026-08-28',
+          },
+        ],
+      },
+      {
+        id: 'toeic-532',
+        round: '제532회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '정기시험',
+            reg: { start: '2026-07-27', end: '2026-08-18' },
+            exam: { start: '2026-08-30', end: '2026-08-30' },
+            pass: '2026-09-11',
+          },
+        ],
+      },
     ],
   },
   {
@@ -95,9 +210,21 @@ export const EXAMS = [
     subjects: ['데이터 모델링의 이해', 'SQL 기본', 'SQL 활용'],
     pastExamRounds: 5,
     mockRounds: 2,
-    upcoming: [
-      { label: '제62회 (예시)', date: '2026-09-06' },
-      { label: '제63회 (예시)', date: '2026-11-15' },
+    qnet: null,
+    scheduleFallback: [
+      {
+        id: 'sqld-62',
+        round: '제62회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '시험',
+            reg: { start: '2026-08-04', end: '2026-08-08' },
+            exam: { start: '2026-09-06', end: '2026-09-06' },
+            pass: '2026-09-26',
+          },
+        ],
+      },
     ],
   },
   {
@@ -111,8 +238,28 @@ export const EXAMS = [
     subjects: ['전기자기학', '전력공학', '전기기기', '회로이론 및 제어공학', '전기설비기술기준'],
     pastExamRounds: 8,
     mockRounds: 3,
-    upcoming: [
-      { label: '2026 정기기사 3회 필기 (예시)', date: '2026-08-09' },
+    qnet: { qualgbCd: 'T', grade: '기사' },
+    scheduleFallback: [
+      {
+        id: 'jeongi-2026-3',
+        round: '2026년 정기 기사 3회',
+        stages: [
+          {
+            key: 'written',
+            label: '필기',
+            reg: { start: '2026-06-16', end: '2026-06-19' },
+            exam: { start: '2026-08-09', end: '2026-08-27' },
+            pass: '2026-09-10',
+          },
+          {
+            key: 'practical',
+            label: '실기',
+            reg: { start: '2026-09-22', end: '2026-09-25' },
+            exam: { start: '2026-11-01', end: '2026-11-16' },
+            pass: '2026-12-24',
+          },
+        ],
+      },
     ],
   },
   {
@@ -133,8 +280,28 @@ export const EXAMS = [
     ],
     pastExamRounds: 8,
     mockRounds: 3,
-    upcoming: [
-      { label: '2026 정기기사 3회 필기 (예시)', date: '2026-08-09' },
+    qnet: { qualgbCd: 'T', grade: '기사' },
+    scheduleFallback: [
+      {
+        id: 'sananjeon-2026-3',
+        round: '2026년 정기 기사 3회',
+        stages: [
+          {
+            key: 'written',
+            label: '필기',
+            reg: { start: '2026-06-16', end: '2026-06-19' },
+            exam: { start: '2026-08-09', end: '2026-08-27' },
+            pass: '2026-09-10',
+          },
+          {
+            key: 'practical',
+            label: '실기',
+            reg: { start: '2026-09-22', end: '2026-09-25' },
+            exam: { start: '2026-11-01', end: '2026-11-16' },
+            pass: '2026-12-24',
+          },
+        ],
+      },
     ],
   },
   {
@@ -154,8 +321,21 @@ export const EXAMS = [
     ],
     pastExamRounds: 6,
     mockRounds: 4,
-    upcoming: [
-      { label: '제37회 (예시)', date: '2026-10-31' },
+    qnet: null, // 국가전문자격 — 별도 자격구분코드 필요(로드맵)
+    scheduleFallback: [
+      {
+        id: 'gongin-37',
+        round: '제37회 (1·2차 동시)',
+        stages: [
+          {
+            key: 'sitting',
+            label: '1·2차',
+            reg: { start: '2026-08-10', end: '2026-08-14' },
+            exam: { start: '2026-10-31', end: '2026-10-31' },
+            pass: '2026-11-25',
+          },
+        ],
+      },
     ],
   },
   {
@@ -169,8 +349,21 @@ export const EXAMS = [
     subjects: ['인간행동과 사회환경', '사회복지조사론', '사회복지실천론', '사회복지정책론', '사회복지법제론'],
     pastExamRounds: 6,
     mockRounds: 3,
-    upcoming: [
-      { label: '제25회 (예시)', date: '2027-01-16' },
+    qnet: null, // 국가전문자격 — 로드맵
+    scheduleFallback: [
+      {
+        id: 'sahoebokji-25',
+        round: '제25회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '필기',
+            reg: { start: '2026-11-24', end: '2026-12-01' },
+            exam: { start: '2027-01-16', end: '2027-01-16' },
+            pass: '2027-02-13',
+          },
+        ],
+      },
     ],
   },
   {
@@ -184,8 +377,28 @@ export const EXAMS = [
     subjects: ['지게차 주행·화물 적재', '안전관리', '장비구조 및 점검'],
     pastExamRounds: 5,
     mockRounds: 2,
-    upcoming: [
-      { label: '상시검정 (예시)', date: '2026-08-05' },
+    qnet: { qualgbCd: 'T', grade: '기능사' },
+    scheduleFallback: [
+      {
+        id: 'jigyecha-2026-sangsi',
+        round: '2026 상시 기능사',
+        stages: [
+          {
+            key: 'written',
+            label: '필기',
+            reg: null, // 상시 접수
+            exam: { start: '2026-08-05', end: '2026-08-05' },
+            pass: '2026-08-05',
+          },
+          {
+            key: 'practical',
+            label: '실기',
+            reg: null,
+            exam: { start: '2026-09-12', end: '2026-09-12' },
+            pass: '2026-09-25',
+          },
+        ],
+      },
     ],
   },
 ];

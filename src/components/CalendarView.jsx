@@ -1,18 +1,27 @@
 import React, { useMemo, useState } from 'react';
 import { PHASES, PHASE_MAP } from '../lib/planner.js';
+import { scheduleMarks, nextActionReminder } from '../lib/schedule.js';
 import {
   todayKey,
   fromKey,
   toKey,
   diffDays,
   formatKorean,
+  formatShort,
   formatMinutes,
   WEEKDAY_LABELS,
 } from '../lib/date.js';
 
+const MARK_KIND = {
+  'reg-start': { cls: 'reg', short: '접수 시작' },
+  'reg-end': { cls: 'reg', short: '접수 마감' },
+  pass: { cls: 'pass', short: '합격 발표' },
+};
+
 export default function CalendarView({
   exam,
   examDate,
+  examMeta,
   plan,
   completed,
   tips,
@@ -21,6 +30,8 @@ export default function CalendarView({
   onReset,
 }) {
   const today = todayKey();
+  const marks = useMemo(() => (examMeta ? scheduleMarks(examMeta) : {}), [examMeta]);
+  const reminder = useMemo(() => nextActionReminder(examMeta, today), [examMeta, today]);
   const unitMap = useMemo(() => new Map(plan.units.map((u) => [u.id, u])), [plan.units]);
   const dayMap = useMemo(() => new Map(plan.days.map((d) => [d.date, d])), [plan.days]);
   const doneSet = useMemo(() => new Set(completed), [completed]);
@@ -53,7 +64,8 @@ export default function CalendarView({
 
   const weeks = useMemo(() => buildMonthGrid(monthCursor.year, monthCursor.month), [monthCursor]);
   const dday = diffDays(today, examDate);
-  const selectedDay = dayMap.get(selectedDate);
+  const rawSelectedDay = dayMap.get(selectedDate);
+  const selectedDay = rawSelectedDay && rawSelectedDay.unitIds.length > 0 ? rawSelectedDay : null;
 
   const moveMonth = (delta) => {
     setMonthCursor(({ year, month }) => {
@@ -72,10 +84,14 @@ export default function CalendarView({
             </span>
           </h2>
           <p className="panel-desc">
+            {examMeta?.roundLabel && examMeta.roundLabel !== '직접 입력'
+              ? `${examMeta.roundLabel} ${examMeta.stageLabel} · `
+              : ''}
             {formatKorean(examDate)} 시험 · 총 {formatMinutes(progress.total)} 계획
             {tips.length > 0 && ` · ${tips.length}개 커뮤니티 전략 반영`}
           </p>
         </div>
+        {reminder && <div className={`reg-reminder ${reminder.tone}`}>{reminder.text}</div>}
         <div className="progress-block">
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${progress.pct}%` }} />
@@ -124,11 +140,13 @@ export default function CalendarView({
             ))}
             {weeks.flat().map((cell, idx) => {
               if (!cell) return <div key={`x${idx}`} className="cal-cell empty" />;
-              const day = dayMap.get(cell);
+              const rawDay = dayMap.get(cell);
+              const day = rawDay && rawDay.unitIds.length > 0 ? rawDay : null;
               const isExam = cell === examDate;
               const isToday = cell === today;
-              const allDone = day && day.unitIds.length > 0 && day.unitIds.every((id) => doneSet.has(id));
+              const allDone = day && day.unitIds.every((id) => doneSet.has(id));
               const phases = day ? [...new Set(day.unitIds.map((id) => unitMap.get(id)?.phase))] : [];
+              const cellMarks = marks[cell] ?? [];
               return (
                 <button
                   key={cell}
@@ -137,6 +155,7 @@ export default function CalendarView({
                     day ? 'has-plan' : '',
                     isToday ? 'today' : '',
                     isExam ? 'exam-day' : '',
+                    cellMarks.length ? 'has-mark' : '',
                     cell === selectedDate ? 'selected' : '',
                     allDone ? 'all-done' : '',
                   ].join(' ')}
@@ -144,6 +163,11 @@ export default function CalendarView({
                 >
                   <span className="cal-date">{fromKey(cell).getDate()}</span>
                   {isExam && <span className="cal-exam-mark">🎯 시험</span>}
+                  {cellMarks.map((m, i) => (
+                    <span key={i} className={`cal-mark ${MARK_KIND[m.kind]?.cls}`}>
+                      {MARK_KIND[m.kind]?.short}
+                    </span>
+                  ))}
                   {day && (
                     <>
                       <span className="cal-dots">
@@ -173,7 +197,14 @@ export default function CalendarView({
           {selectedDate === examDate && (
             <p className="exam-day-note">🎯 시험 당일! 일찍 자고 수험표·신분증 챙기세요.</p>
           )}
-          {!selectedDay && selectedDate !== examDate && (
+          {(marks[selectedDate] ?? []).map((m, i) => (
+            <p key={i} className={`sched-note ${MARK_KIND[m.kind]?.cls}`}>
+              {m.kind === 'reg-start' && '📝 원서접수 시작일 — 큐넷에서 시험 신청하세요.'}
+              {m.kind === 'reg-end' && '⏰ 원서접수 마감일 — 오늘까지 신청해야 해요!'}
+              {m.kind === 'pass' && '🏆 합격자 발표일'}
+            </p>
+          ))}
+          {!selectedDay && selectedDate !== examDate && (marks[selectedDate] ?? []).length === 0 && (
             <p className="empty-note">
               이 날은 배정된 공부가 없어요. {selectedDate < today ? '' : '휴식일이거나 계획 범위 밖이에요. 🌴'}
             </p>
