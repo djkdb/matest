@@ -15,6 +15,7 @@ import { celebrate } from './lib/confetti.js';
 import { STREAK_MIN_SECONDS, daySeconds, computeStreak } from './lib/study.js';
 import { dueReminders } from './lib/reminders.js';
 import { permissionState, showNotification } from './lib/push.js';
+import { isReviewable, buildReviews, mergeReviews, removeReviewsForSource } from './lib/review.js';
 
 const STEPS = ['exam', 'date', 'tips', 'setup', 'calendar'];
 
@@ -27,6 +28,8 @@ const INITIAL = {
   settings: { dailyMinutes: 120, restDays: [] },
   plan: null,
   completed: [],
+  reviews: [], // 간격 반복 복습 아이템 (완료일 기준으로 생성)
+  reviewDone: [], // 완료한 복습 id
   studyLog: {}, // { 'YYYY-MM-DD': seconds } 공부 시간 기록 (계획과 무관하게 누적)
   timerStartedAt: null, // 진행 중 타이머의 시작 시각(epoch ms) — 새로고침에도 복원
   notifyPrefs: {
@@ -102,9 +105,36 @@ export default function App() {
   const handleToggleUnit = (unitId) => {
     setState((s) => {
       const done = new Set(s.completed);
-      if (done.has(unitId)) done.delete(unitId);
-      else done.add(unitId);
-      return { ...s, completed: [...done] };
+      const unit = s.plan?.units.find((u) => u.id === unitId);
+      let { reviews, reviewDone } = s;
+
+      if (done.has(unitId)) {
+        done.delete(unitId);
+        // 완료 취소 → 해당 유닛의 복습 제거
+        if (isReviewable(unit)) {
+          const removed = new Set(
+            reviews.filter((r) => r.sourceUnitId === unitId).map((r) => r.id)
+          );
+          reviews = removeReviewsForSource(reviews, unitId);
+          reviewDone = reviewDone.filter((id) => !removed.has(id));
+        }
+      } else {
+        done.add(unitId);
+        // 완료 → 오늘 기준 간격 반복 복습 생성 (개념/기출만)
+        if (isReviewable(unit)) {
+          reviews = mergeReviews(reviews, buildReviews(unit, todayKey(), s.examDate));
+        }
+      }
+      return { ...s, completed: [...done], reviews, reviewDone };
+    });
+  };
+
+  const handleToggleReview = (reviewId) => {
+    setState((s) => {
+      const done = new Set(s.reviewDone);
+      if (done.has(reviewId)) done.delete(reviewId);
+      else done.add(reviewId);
+      return { ...s, reviewDone: [...done] };
     });
   };
 
@@ -257,6 +287,9 @@ export default function App() {
             onTimerStop={handleTimerStop}
             notifyPrefs={state.notifyPrefs}
             onNotifyChange={handleNotifyChange}
+            reviews={state.reviews}
+            reviewDone={state.reviewDone}
+            onToggleReview={handleToggleReview}
             onToggleUnit={handleToggleUnit}
             onReplan={handleReplan}
             onReset={handleReset}

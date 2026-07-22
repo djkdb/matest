@@ -8,6 +8,7 @@ import AnimatedNumber from './AnimatedNumber.jsx';
 import StudyTimer from './StudyTimer.jsx';
 import NotifySettings from './NotifySettings.jsx';
 import Icon from './Icon.jsx';
+import { reviewsByDate, dueReviewCount, REVIEW_COLOR } from '../lib/review.js';
 import {
   todayKey,
   fromKey,
@@ -51,12 +52,21 @@ export default function CalendarView({
   onTimerStop,
   notifyPrefs,
   onNotifyChange,
+  reviews = [],
+  reviewDone = [],
+  onToggleReview,
   onToggleUnit,
   onReplan,
   onReset,
 }) {
   const today = todayKey();
   const marks = useMemo(() => (examMeta ? scheduleMarks(examMeta) : {}), [examMeta]);
+  const reviewMap = useMemo(() => reviewsByDate(reviews), [reviews]);
+  const reviewDoneSet = useMemo(() => new Set(reviewDone), [reviewDone]);
+  const dueReviews = useMemo(
+    () => dueReviewCount(reviews, reviewDone, today),
+    [reviews, reviewDone, today]
+  );
   const reminder = useMemo(() => nextActionReminder(examMeta, today), [examMeta, today]);
   const unitMap = useMemo(() => new Map(plan.units.map((u) => [u.id, u])), [plan.units]);
   const dayMap = useMemo(() => new Map(plan.days.map((d) => [d.date, d])), [plan.days]);
@@ -172,6 +182,16 @@ export default function CalendarView({
             <Icon name="bell" size={16} /> {reminder.text}
           </div>
         )}
+        {dueReviews > 0 && (
+          <button
+            className="review-due"
+            onClick={() => setSelectedDate(today)}
+            aria-label={`복습 ${dueReviews}개 대기, 오늘로 이동`}
+          >
+            <span className="review-dot" style={{ background: REVIEW_COLOR }} />
+            복습 {dueReviews}개가 기다리고 있어요
+          </button>
+        )}
         <div className="cal-actions">
           {overdueCount > 0 && (
             <button className="btn warn" onClick={onReplan}>
@@ -231,16 +251,26 @@ export default function CalendarView({
               if (!cell) return <div key={`x${idx}`} className="cal-cell empty" />;
               const rawDay = dayMap.get(cell);
               const day = rawDay && rawDay.unitIds.length > 0 ? rawDay : null;
+              const dayReviews = reviewMap[cell] ?? [];
               const isExam = cell === examDate;
               const isToday = cell === today;
-              const allDone = day && day.unitIds.every((id) => doneSet.has(id));
+              const unitsDone = !day || day.unitIds.every((id) => doneSet.has(id));
+              const revsDone = dayReviews.every((r) => reviewDoneSet.has(r.id));
+              const hasContent = !!day || dayReviews.length > 0;
+              const allDone = hasContent && unitsDone && revsDone;
               const phases = day ? [...new Set(day.unitIds.map((id) => unitMap.get(id)?.phase))] : [];
               const cellMarks = marks[cell] ?? [];
+              const minLabel = [
+                day && formatMinutes(day.totalMinutes),
+                dayReviews.length && `복습 ${dayReviews.length}`,
+              ]
+                .filter(Boolean)
+                .join(' · ');
               const cellLabel = [
                 formatKorean(cell),
                 isExam && '시험일',
                 ...cellMarks.map((m) => MARK_KIND[m.kind]?.short),
-                day && (allDone ? '공부 완료' : `공부 ${formatMinutes(day.totalMinutes)}`),
+                hasContent && (allDone ? '완료' : minLabel),
               ]
                 .filter(Boolean)
                 .join(', ');
@@ -251,7 +281,7 @@ export default function CalendarView({
                   aria-pressed={cell === selectedDate}
                   className={[
                     'cal-cell',
-                    day ? 'has-plan' : '',
+                    hasContent ? 'has-plan' : '',
                     isToday ? 'today' : '',
                     isExam ? 'exam-day' : '',
                     cellMarks.length ? 'has-mark' : '',
@@ -267,14 +297,15 @@ export default function CalendarView({
                       {MARK_KIND[m.kind]?.short}
                     </span>
                   ))}
-                  {day && (
+                  {hasContent && (
                     <>
                       <span className="cal-dots">
                         {phases.map((p) => (
                           <i key={p} style={{ background: PHASE_MAP[p]?.color }} />
                         ))}
+                        {dayReviews.length > 0 && <i style={{ background: REVIEW_COLOR }} />}
                       </span>
-                      <span className="cal-min">{allDone ? '✓ 완료' : formatMinutes(day.totalMinutes)}</span>
+                      <span className="cal-min">{allDone ? '✓ 완료' : minLabel}</span>
                     </>
                   )}
                 </button>
@@ -288,6 +319,9 @@ export default function CalendarView({
                 <i style={{ background: p.color }} /> {p.label}
               </span>
             ))}
+            <span>
+              <i style={{ background: REVIEW_COLOR }} /> 복습
+            </span>
           </div>
         </div>
 
@@ -303,11 +337,14 @@ export default function CalendarView({
               {m.kind === 'pass' && '합격자 발표일'}
             </p>
           ))}
-          {!selectedDay && selectedDate !== examDate && (marks[selectedDate] ?? []).length === 0 && (
-            <p className="empty-note">
-              이 날은 배정된 공부가 없어요.{selectedDate < today ? '' : ' 휴식일이거나 계획 범위 밖이에요.'}
-            </p>
-          )}
+          {!selectedDay &&
+            selectedDate !== examDate &&
+            (marks[selectedDate] ?? []).length === 0 &&
+            (reviewMap[selectedDate] ?? []).length === 0 && (
+              <p className="empty-note">
+                이 날은 배정된 공부가 없어요.{selectedDate < today ? '' : ' 휴식일이거나 계획 범위 밖이에요.'}
+              </p>
+            )}
           {selectedDay && (
             <ul className="unit-list">
               {selectedDay.unitIds.map((id) => {
@@ -339,6 +376,36 @@ export default function CalendarView({
               {selectedDay.unitIds.filter((id) => doneSet.has(id)).length}/{selectedDay.unitIds.length}{' '}
               완료
             </p>
+          )}
+
+          {(reviewMap[selectedDate] ?? []).length > 0 && (
+            <div className="review-block">
+              <h4 className="review-head">
+                <i style={{ background: REVIEW_COLOR }} /> 복습 ({reviewMap[selectedDate].length})
+              </h4>
+              <ul className="unit-list">
+                {reviewMap[selectedDate].map((r) => {
+                  const done = reviewDoneSet.has(r.id);
+                  return (
+                    <li key={r.id} className={done ? 'done' : ''}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={done}
+                          onChange={() => onToggleReview(r.id)}
+                        />
+                        <span className="unit-phase" style={{ background: REVIEW_COLOR }}>
+                          복습
+                        </span>
+                        <span className="unit-title">{r.sourceTitle}</span>
+                        <span className="unit-min">{r.interval}일차</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="review-tip">완료한 개념·기출을 간격을 두고 다시 보면 훨씬 오래 기억돼요.</p>
+            </div>
           )}
         </div>
       </div>
