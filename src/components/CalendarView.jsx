@@ -5,6 +5,7 @@ import { buildICS } from '../lib/ics.js';
 import { celebrate, burstAt } from '../lib/confetti.js';
 import ProgressRing from './ProgressRing.jsx';
 import AnimatedNumber from './AnimatedNumber.jsx';
+import StudyTimer from './StudyTimer.jsx';
 import Icon from './Icon.jsx';
 import {
   todayKey,
@@ -43,6 +44,10 @@ export default function CalendarView({
   plan,
   completed,
   tips,
+  studyLog,
+  timerStartedAt,
+  onTimerStart,
+  onTimerStop,
   onToggleUnit,
   onReplan,
   onReset,
@@ -126,6 +131,12 @@ export default function CalendarView({
 
   return (
     <section className="calendar-wrap">
+      <StudyTimer
+        studyLog={studyLog}
+        startedAt={timerStartedAt}
+        onStart={onTimerStart}
+        onStop={onTimerStop}
+      />
       <div className="cal-header panel">
         <div className="cal-top">
           <div className="cal-title">

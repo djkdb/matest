@@ -12,6 +12,7 @@ import PlanSetup from './components/PlanSetup.jsx';
 import CalendarView from './components/CalendarView.jsx';
 import InstallPrompt from './components/InstallPrompt.jsx';
 import { celebrate } from './lib/confetti.js';
+import { STREAK_MIN_SECONDS, daySeconds } from './lib/study.js';
 
 const STEPS = ['exam', 'date', 'tips', 'setup', 'calendar'];
 
@@ -24,6 +25,8 @@ const INITIAL = {
   settings: { dailyMinutes: 120, restDays: [] },
   plan: null,
   completed: [],
+  studyLog: {}, // { 'YYYY-MM-DD': seconds } 공부 시간 기록 (계획과 무관하게 누적)
+  timerStartedAt: null, // 진행 중 타이머의 시작 시각(epoch ms) — 새로고침에도 복원
 };
 
 export default function App() {
@@ -82,10 +85,31 @@ export default function App() {
     }));
   };
 
+  const handleTimerStart = () => {
+    setState((s) => (s.timerStartedAt ? s : { ...s, timerStartedAt: Date.now() }));
+  };
+
+  const handleTimerStop = (elapsedSeconds) => {
+    setState((s) => {
+      const key = todayKey();
+      const prev = daySeconds(s.studyLog, key);
+      const next = prev + Math.max(0, Math.round(elapsedSeconds));
+      // 오늘 '처음' 공부 인정선을 넘겼으면 스트릭 이어짐 축하
+      if (prev < STREAK_MIN_SECONDS && next >= STREAK_MIN_SECONDS) {
+        setTimeout(() => celebrate({ count: 90, spread: 0.9 }), 60);
+      }
+      return { ...s, studyLog: { ...s.studyLog, [key]: next }, timerStartedAt: null };
+    });
+  };
+
   const handleReset = () => {
-    if (!window.confirm('현재 계획을 삭제하고 처음부터 다시 만들까요?')) return;
-    clearState();
-    setState(INITIAL);
+    if (!window.confirm('현재 계획을 삭제하고 처음부터 다시 만들까요? (공부 기록·연속일은 유지돼요)')) return;
+    // 공부 기록/스트릭은 학습 이력이라 계획 초기화와 무관하게 보존
+    setState((s) => {
+      const preserved = { ...INITIAL, studyLog: s.studyLog, timerStartedAt: s.timerStartedAt };
+      saveState(preserved);
+      return preserved;
+    });
   };
 
   const dday = state.examDate ? diffDays(todayKey(), state.examDate) : null;
@@ -191,6 +215,10 @@ export default function App() {
             plan={state.plan}
             completed={state.completed}
             tips={selectedTips}
+            studyLog={state.studyLog}
+            timerStartedAt={state.timerStartedAt}
+            onTimerStart={handleTimerStart}
+            onTimerStop={handleTimerStop}
             onToggleUnit={handleToggleUnit}
             onReplan={handleReplan}
             onReset={handleReset}
