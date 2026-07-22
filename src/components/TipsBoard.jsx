@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { fetchTips } from '../lib/tipService.js';
 import { SOURCES } from '../data/tips.js';
 import { PHASES } from '../lib/planner.js';
+import Reveal from './Reveal.jsx';
 
 export default function TipsBoard({ exam, selectedIds, onChange, onBack, onNext }) {
   const [tips, setTips] = useState(null); // null = 로딩 중
@@ -80,11 +81,11 @@ export default function TipsBoard({ exam, selectedIds, onChange, onBack, onNext 
       </div>
 
       <div className="tips-list">
-        {visible.map((tip) => {
+        {visible.map((tip, i) => {
           const src = SOURCES[tip.source];
           const on = selectedIds.includes(tip.id);
           return (
-            <article key={tip.id} className={`tip-card ${on ? 'selected' : ''}`}>
+            <Reveal key={tip.id} delay={Math.min(i * 40, 320)} as="article" className={`tip-card ${on ? 'selected' : ''}`}>
               <header className="tip-head">
                 <span className="source-badge" style={{ background: src.color }}>
                   {src.short}
@@ -127,7 +128,7 @@ export default function TipsBoard({ exam, selectedIds, onChange, onBack, onNext 
                   <span className="strategy-hours">권장 총 {tip.strategy.recommendedTotalHours}시간</span>
                 </div>
               )}
-            </article>
+            </Reveal>
           );
         })}
       </div>

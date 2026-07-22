@@ -15,6 +15,19 @@
 
 모든 상태는 `localStorage`에 저장되어 새로고침해도 유지됩니다.
 
+## 🎨 디자인 시스템 (Soft Minimal)
+
+깨끗한 여백·얇은 라인·섬세한 그림자·절제된 포인트 컬러 기반의 "Soft Minimal" 언어에, 목적 있는 모션을 얹었습니다.
+
+- **라이트/다크 자동** — `prefers-color-scheme` 기반. CSS 변수 토큰으로 두 테마를 관리하고, 색조 배지·노트는 `color-mix()`로 테마에 자동 적응
+- **앰비언트 3D 히어로** — 배경에 은은히 떠다니는 그라데이션 블롭(Spline 런타임 없이 CSS만)
+- **스크롤 등장·스태거** — `Reveal`(IntersectionObserver)로 카드가 순차적으로 fade-up
+- **애니메이션 D-day·진행률 링** — `AnimatedNumber` 카운트업 + `ProgressRing`(그라데이션 스트로크)
+- **축하 효과** — `confetti.js`(의존성 0)로 계획 생성·100% 달성 시 컨페티, 유닛 완료 시 작은 버스트
+- **접근성** — `prefers-reduced-motion`이면 모든 모션·블롭·컨페티를 자동 비활성화
+
+관련 파일: `src/lib/confetti.js`, `src/components/{Reveal,AnimatedNumber,ProgressRing}.jsx`, `src/styles.css`(토큰 + 다크 오버라이드).
+
 ## 📱 휴대폰 앱으로 설치 (PWA)
 
 이 앱은 **PWA(Progressive Web App)** 라서 스토어 없이 홈 화면에 설치할 수 있습니다.

@@ -11,6 +11,7 @@ import TipsBoard from './components/TipsBoard.jsx';
 import PlanSetup from './components/PlanSetup.jsx';
 import CalendarView from './components/CalendarView.jsx';
 import InstallPrompt from './components/InstallPrompt.jsx';
+import { celebrate } from './lib/confetti.js';
 
 const STEPS = ['exam', 'date', 'tips', 'setup', 'calendar'];
 
@@ -55,6 +56,8 @@ export default function App() {
       restDays: settings.restDays,
     });
     setState((s) => ({ ...s, settings, plan, completed: [], step: 'calendar' }));
+    // 계획 생성 축하
+    setTimeout(() => celebrate({ count: 140 }), 250);
   };
 
   const handleToggleUnit = (unitId) => {
@@ -88,8 +91,14 @@ export default function App() {
   const dday = state.examDate ? diffDays(todayKey(), state.examDate) : null;
 
   return (
-    <div className="app">
-      <header className="app-header">
+    <>
+      <div className="ambient" aria-hidden="true">
+        <span className="blob b1" />
+        <span className="blob b2" />
+        <span className="blob b3" />
+      </div>
+      <div className="app">
+        <header className="app-header">
         <div className="brand" onClick={() => state.plan && goto('calendar')}>
           <span className="brand-logo">🎯</span>
           <div>
@@ -198,6 +207,7 @@ export default function App() {
           공식 기관에서 꼭 확인하세요.
         </p>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }

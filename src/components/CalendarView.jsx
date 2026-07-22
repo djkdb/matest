@@ -1,7 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PHASES, PHASE_MAP } from '../lib/planner.js';
 import { scheduleMarks, nextActionReminder } from '../lib/schedule.js';
 import { buildICS } from '../lib/ics.js';
+import { celebrate, burstAt } from '../lib/confetti.js';
+import ProgressRing from './ProgressRing.jsx';
+import AnimatedNumber from './AnimatedNumber.jsx';
 import {
   todayKey,
   fromKey,
@@ -81,6 +84,23 @@ export default function CalendarView({
     return { total, done, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
   }, [plan.units, doneSet]);
 
+  // 100% 달성 순간 축하 (한 번만)
+  const prevPct = useRef(progress.pct);
+  useEffect(() => {
+    if (progress.pct === 100 && prevPct.current < 100) {
+      celebrate({ count: 180, spread: 1.2 });
+    }
+    prevPct.current = progress.pct;
+  }, [progress.pct]);
+
+  // 체크 시 작은 버스트 (완료로 바뀔 때만)
+  const handleToggle = (unitId, e) => {
+    const wasDone = doneSet.has(unitId);
+    // 완료로 체크할 때, 클릭 좌표가 있으면 작은 컨페티 버스트
+    if (!wasDone && e && e.clientX > 0 && e.clientY > 0) burstAt(e.clientX, e.clientY);
+    onToggleUnit(unitId);
+  };
+
   // 밀린 유닛: 오늘 이전 날짜에 배정됐지만 미완료
   const overdueCount = useMemo(
     () =>
@@ -106,29 +126,33 @@ export default function CalendarView({
   return (
     <section className="calendar-wrap">
       <div className="cal-header panel">
-        <div className="cal-title">
-          <h2>
-            {exam.name} <span className={`dday-badge ${dday <= 7 ? 'urgent' : ''}`}>
-              {dday === 0 ? 'D-DAY' : dday > 0 ? `D-${dday}` : '시험 종료'}
+        <div className="cal-top">
+          <div className="cal-title">
+            <h2>
+              {exam.name}{' '}
+              <span className={`dday-badge ${dday <= 7 ? 'urgent' : ''}`}>
+                {dday === 0 ? 'D-DAY' : dday > 0 ? <>D-<AnimatedNumber value={dday} /></> : '시험 종료'}
+              </span>
+            </h2>
+            <p className="panel-desc">
+              {examMeta?.roundLabel && examMeta.roundLabel !== '직접 입력'
+                ? `${examMeta.roundLabel} ${examMeta.stageLabel} · `
+                : ''}
+              {formatKorean(examDate)} 시험 · 총 {formatMinutes(progress.total)} 계획
+              {tips.length > 0 && ` · ${tips.length}개 커뮤니티 전략 반영`}
+            </p>
+            <p className="progress-text">
+              {formatMinutes(progress.done)} 완료 / {formatMinutes(progress.total)}
+            </p>
+          </div>
+          <ProgressRing pct={progress.pct} size={96}>
+            <span className="ring-pct">
+              <AnimatedNumber value={progress.pct} />%
             </span>
-          </h2>
-          <p className="panel-desc">
-            {examMeta?.roundLabel && examMeta.roundLabel !== '직접 입력'
-              ? `${examMeta.roundLabel} ${examMeta.stageLabel} · `
-              : ''}
-            {formatKorean(examDate)} 시험 · 총 {formatMinutes(progress.total)} 계획
-            {tips.length > 0 && ` · ${tips.length}개 커뮤니티 전략 반영`}
-          </p>
+            <span className="ring-sub">완료</span>
+          </ProgressRing>
         </div>
         {reminder && <div className={`reg-reminder ${reminder.tone}`}>{reminder.text}</div>}
-        <div className="progress-block">
-          <div className="progress-track">
-            <div className="progress-fill" style={{ width: `${progress.pct}%` }} />
-          </div>
-          <span className="progress-text">
-            {progress.pct}% 완료 ({formatMinutes(progress.done)} / {formatMinutes(progress.total)})
-          </span>
-        </div>
         <div className="cal-actions">
           {overdueCount > 0 && (
             <button className="btn warn" onClick={onReplan}>
@@ -262,7 +286,11 @@ export default function CalendarView({
                 return (
                   <li key={id} className={done ? 'done' : ''}>
                     <label>
-                      <input type="checkbox" checked={done} onChange={() => onToggleUnit(id)} />
+                      <input
+                        type="checkbox"
+                        checked={done}
+                        onChange={(e) => handleToggle(id, e.nativeEvent)}
+                      />
                       <span className="unit-phase" style={{ background: PHASE_MAP[u.phase]?.color }}>
                         {PHASE_MAP[u.phase]?.label}
                       </span>

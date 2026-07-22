@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { EXAMS, CATEGORIES } from '../data/exams.js';
+import Reveal from './Reveal.jsx';
 
 export default function ExamPicker({ selectedId, onSelect }) {
   const [query, setQuery] = useState('');
@@ -45,22 +46,23 @@ export default function ExamPicker({ selectedId, onSelect }) {
       </div>
 
       <div className="exam-grid">
-        {filtered.map((exam) => (
-          <button
-            key={exam.id}
-            className={`exam-card ${selectedId === exam.id ? 'selected' : ''}`}
-            onClick={() => onSelect(exam.id)}
-          >
-            <div className="exam-card-top">
-              <h3>{exam.name}</h3>
-              {exam.popular && <span className="badge hot">🔥 인기</span>}
-            </div>
-            <p className="exam-organizer">{exam.organizer}</p>
-            <div className="exam-meta">
-              <span className={`badge diff-${exam.difficulty}`}>난이도 {exam.difficulty}</span>
-              <span className="badge">평균 준비 {exam.avgPrepWeeks}주</span>
-            </div>
-          </button>
+        {filtered.map((exam, i) => (
+          <Reveal key={exam.id} delay={Math.min(i * 45, 360)}>
+            <button
+              className={`exam-card ${selectedId === exam.id ? 'selected' : ''}`}
+              onClick={() => onSelect(exam.id)}
+            >
+              <div className="exam-card-top">
+                <h3>{exam.name}</h3>
+                {exam.popular && <span className="badge hot">🔥 인기</span>}
+              </div>
+              <p className="exam-organizer">{exam.organizer}</p>
+              <div className="exam-meta">
+                <span className={`badge diff-${exam.difficulty}`}>난이도 {exam.difficulty}</span>
+                <span className="badge">평균 준비 {exam.avgPrepWeeks}주</span>
+              </div>
+            </button>
+          </Reveal>
         ))}
         {filtered.length === 0 && (
           <p className="empty-note">

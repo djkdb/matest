@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { fetchSchedule } from '../lib/qnetService.js';
 import { regStatus, flattenStages, toExamMeta } from '../lib/schedule.js';
 import { todayKey, addDays, diffDays, formatKorean, formatShort } from '../lib/date.js';
+import Reveal from './Reveal.jsx';
 
 export default function SchedulePicker({ exam, value, onBack, onNext }) {
   const today = todayKey();
@@ -85,13 +86,15 @@ export default function SchedulePicker({ exam, value, onBack, onNext }) {
 
       {rows.length > 0 ? (
         <div className="schedule-list">
-          {rows.map(({ session, stage }) => {
+          {rows.map(({ session, stage }, i) => {
             const id = `${session.id}::${stage.key}`;
             const reg = regStatus(stage.reg, today);
             const examDday = diffDays(today, stage.exam.start);
             return (
-              <button
+              <Reveal
                 key={id}
+                delay={Math.min(i * 55, 330)}
+                as="button"
                 className={`schedule-card stage ${pickedId === id && !custom ? 'selected' : ''}`}
                 onClick={() => pickStage(session, stage)}
               >
@@ -112,7 +115,7 @@ export default function SchedulePicker({ exam, value, onBack, onNext }) {
                   </div>
                 </div>
                 <span className={`dday-badge ${examDday <= 7 ? 'urgent' : ''}`}>D-{examDday}</span>
-              </button>
+              </Reveal>
             );
           })}
         </div>
