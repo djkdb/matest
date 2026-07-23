@@ -713,6 +713,37 @@ h1, h2, h3 {
   .cal-body { grid-template-columns: 1.3fr 1fr; }
 }
 
+/* ─── 데스크탑: 대시보드 레이아웃 ─── */
+@media (min-width: 1024px) {
+  .app { max-width: 1200px; }
+
+  /* 위저드 단일 패널은 읽기 좋은 폭으로 가운데 정렬 */
+  .app-main > .panel,
+  .app-main > .empty-state {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* 꿀팁 2열 */
+  .tips-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+
+  /* 캘린더 화면: 좌(타이머·알림) + 우(D-day·큰 캘린더) 대시보드 */
+  .calendar-wrap {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .calendar-wrap > .timer-card { grid-column: 1; grid-row: 1; }
+  .calendar-wrap > .notify-card { grid-column: 1; grid-row: 2; }
+  .calendar-wrap > .cal-header { grid-column: 2; grid-row: 1; }
+  .calendar-wrap > .cal-body { grid-column: 2; grid-row: 2; }
+
+  /* 데스크탑에선 캘린더 셀을 좀 더 크게 */
+  .cal-cell { min-height: 88px; }
+}
+
 @media (max-width: 560px) {
   .step-item .step-label { display: none; }
   .step-item.active .step-label { display: inline; }
