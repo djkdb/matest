@@ -49,6 +49,12 @@ const PATHS = {
   ),
   play: <path d="M7 5v14l11-7z" />,
   stop: <rect x="6" y="6" width="12" height="12" rx="2.5" />,
+  pip: (
+    <>
+      <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
+      <rect x="12" y="12" width="7" height="5" rx="1.2" fill="currentColor" stroke="none" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 18, stroke = 2, className = '', style }) {
