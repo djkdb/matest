@@ -73,7 +73,9 @@ test('formatClock', () => {
 
 test('formatDuration', () => {
   assert.equal(formatDuration(0), '0분');
-  assert.equal(formatDuration(90), '2분'); // 반올림
+  assert.equal(formatDuration(8), '8초'); // 짧은 공부도 안 사라짐
+  assert.equal(formatDuration(90), '1분 30초');
+  assert.equal(formatDuration(600), '10분');
   assert.equal(formatDuration(3600), '1시간');
   assert.equal(formatDuration(4800), '1시간 20분');
 });

@@ -63,12 +63,17 @@ export function formatClock(totalSec) {
   return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
 }
 
-/** 초 → "1시간 20분" / "45분" / "0분" (요약 표시용) */
+/**
+ * 초 → 사람이 읽는 요약. 초 단위까지 보여줘 짧은 공부도 사라지지 않게 한다.
+ *   0 → "0분", 8 → "8초", 90 → "1분 30초", 3600 → "1시간", 4800 → "1시간 20분"
+ */
 export function formatDuration(totalSec) {
-  const min = Math.round(Math.max(0, totalSec) / 60);
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  if (h === 0) return `${m}분`;
-  if (m === 0) return `${h}시간`;
-  return `${h}시간 ${m}분`;
+  const s = Math.max(0, Math.floor(totalSec));
+  if (s === 0) return '0분';
+  if (s < 60) return `${s}초`;
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (h > 0) return m > 0 ? `${h}시간 ${m}분` : `${h}시간`;
+  return sec > 0 ? `${m}분 ${sec}초` : `${m}분`;
 }
