@@ -1,0 +1,41 @@
+name: Deploy (Cloudflare Pages)
+
+# 프론트엔드를 Cloudflare Pages에 배포합니다.
+# 필요한 GitHub Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
+# (선택) Secrets/Variables: VITE_QNET_API_KEY, VITE_VAPID_PUBLIC_KEY, VITE_PUSH_API
+#   — 없으면 앱은 데모 일정 + 로컬 알림으로 동작합니다.
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch: # 액션 탭에서 수동 실행(현재 브랜치로도 가능)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          VITE_QNET_API_KEY: ${{ secrets.VITE_QNET_API_KEY }}
+          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VITE_VAPID_PUBLIC_KEY }}
+          VITE_PUSH_API: ${{ secrets.VITE_PUSH_API }}
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=exam-master --branch=${{ github.ref_name }}

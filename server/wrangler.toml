@@ -1,0 +1,20 @@
+name = "exam-master-push"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+# webpush-webcrypto는 Web Crypto만 사용 → nodejs_compat 불필요
+
+# 매시간 실행: 각 구독의 로컬 시각/날짜를 계산해 도래한 리마인더 발송
+[triggers]
+crons = ["0 * * * *"]
+
+# 구독 저장소 (배포 전 `wrangler kv:namespace create SUBSCRIPTIONS` 로 id 발급 후 교체)
+[[kv_namespaces]]
+binding = "SUBSCRIPTIONS"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+[vars]
+# 공개키는 설정에 둬도 됨(공개 정보). 개인키는 비밀로: `wrangler secret put VAPID_PRIVATE_KEY`
+VAPID_PUBLIC_KEY = "REPLACE_WITH_YOUR_VAPID_PUBLIC_KEY"
+VAPID_CONTACT = "mailto:you@example.com"
+# 클라이언트(PWA) 배포 도메인. CORS 허용 오리진.
+ALLOWED_ORIGIN = "*"
