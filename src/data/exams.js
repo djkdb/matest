@@ -228,6 +228,51 @@ export const EXAMS = [
     ],
   },
   {
+    id: 'adsp',
+    name: 'ADsP (데이터분석 준전문가)',
+    category: 'it',
+    organizer: '한국데이터산업진흥원',
+    popular: true,
+    difficulty: '하',
+    avgPrepWeeks: 3,
+    subjects: [
+      '데이터 이해',
+      '데이터 분석 기획',
+      '데이터 분석 (통계·정형 데이터 마이닝)',
+    ],
+    pastExamRounds: 6,
+    mockRounds: 2,
+    qnet: null,
+    scheduleFallback: [
+      {
+        id: 'adsp-44',
+        round: '제44회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '시험',
+            reg: { start: '2026-07-27', end: '2026-07-31' },
+            exam: { start: '2026-08-29', end: '2026-08-29' },
+            pass: '2026-09-18',
+          },
+        ],
+      },
+      {
+        id: 'adsp-45',
+        round: '제45회',
+        stages: [
+          {
+            key: 'sitting',
+            label: '시험',
+            reg: { start: '2026-10-05', end: '2026-10-09' },
+            exam: { start: '2026-11-07', end: '2026-11-07' },
+            pass: '2026-11-27',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: 'jeongi',
     name: '전기기사',
     category: 'tech',

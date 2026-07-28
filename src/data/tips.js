@@ -3,6 +3,10 @@
 // ⚠️ 현재는 큐레이션된 데모 데이터다. 실서비스에서는 크롤러/수집 백엔드가
 // 이 형태의 JSON을 API로 내려주고, src/lib/tipService.js 만 교체하면 된다.
 //
+// 원칙: 모든 팁은 **특정 시험에 종속된 실전 정보**여야 한다.
+//   "어떤 시험이든 통하는 공부법" 같은 범용 글은 넣지 않는다
+//   (사용자가 자기 시험 전략을 고르는 화면이라 노이즈가 됨).
+//
 // strategy.phaseWeights: 이 팁이 권장하는 공부 단계별 시간 비중
 //   concept(개념) / past(기출) / mock(모의고사·실전) / wrap(오답·총정리)
 // strategy.recommendedTotalHours: 이 전략이 가정하는 총 공부 시간
@@ -16,7 +20,7 @@ export const SOURCES = {
 };
 
 export const TIPS = [
-  // ─── 정보처리기사 ───
+  // ═══════════ 정보처리기사 ═══════════
   {
     id: 'jcg-1',
     examId: 'jeongcheogi',
@@ -57,7 +61,7 @@ export const TIPS = [
     id: 'jcg-3',
     examId: 'jeongcheogi',
     source: 'youtube',
-    board: '흥달쌤 채널 댓글 모음',
+    board: '정처기 강의 채널 댓글 모음',
     author: '구독자 후기',
     title: '무료 인강 커리큘럼만 따라가도 필기 합격선',
     summary:
@@ -89,8 +93,98 @@ export const TIPS = [
       recommendedTotalHours: 90,
     },
   },
+  {
+    id: 'jcg-5',
+    examId: 'jeongcheogi',
+    source: 'dcinside',
+    board: '정보처리기사 갤러리',
+    author: 'ㅇㅇ(121.157)',
+    title: '실기 프로그래밍 언어 파트만 3주 조진 후기',
+    summary:
+      'C 포인터·구조체, 자바 상속/오버라이딩, 파이썬 리스트 슬라이싱이 실기 단골. 코드 눈으로 읽지 말고 변수 값 손으로 추적해서 표 그리면서 풀어야 실전에서 안 틀림.',
+    upvotes: 1523,
+    comments: 244,
+    tags: ['실기', '프로그래밍', 'C·자바·파이썬'],
+    strategy: {
+      name: '실기 코드추적 전략',
+      phaseWeights: { concept: 0.3, past: 0.45, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 100,
+    },
+  },
+  {
+    id: 'jcg-6',
+    examId: 'jeongcheogi',
+    source: 'blog',
+    board: '개발자 취준 블로그',
+    author: '취준생일기',
+    title: '5과목 중 버릴 과목 없다 — 과락 방지 배분표',
+    summary:
+      '필기는 과목당 40점 과락. 소프트웨어설계·정보시스템구축관리가 암기라 점수 벌기 좋고, 프로그래밍언어활용이 제일 어려움. 어려운 과목에 시간 더 쓰지 말고 쉬운 과목에서 80점 만들어 평균으로 커버.',
+    upvotes: 674,
+    comments: 91,
+    tags: ['과락방지', '점수전략', '필기'],
+    strategy: {
+      name: '과락 방지 배분 전략',
+      phaseWeights: { concept: 0.3, past: 0.45, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 70,
+    },
+  },
+  {
+    id: 'jcg-7',
+    examId: 'jeongcheogi',
+    source: 'naver_cafe',
+    board: '정보처리기사 실기 스터디',
+    author: '실기3수생',
+    title: '실기 떨어지는 이유 1위 = 용어 한글/영어 혼동',
+    summary:
+      '답안에 영어로 쓸지 한글로 쓸지 헷갈리면 둘 다 병기. 정규화·트랜잭션(ACID)·디자인패턴은 매회 나오니 정의를 한 문장으로 외워두기. 약술형은 키워드 2~3개 들어가면 부분점수.',
+    upvotes: 988,
+    comments: 167,
+    tags: ['실기', '용어암기', '부분점수'],
+    strategy: {
+      name: '실기 서술 대비 전략',
+      phaseWeights: { concept: 0.4, past: 0.35, mock: 0.1, wrap: 0.15 },
+      recommendedTotalHours: 95,
+    },
+  },
+  {
+    id: 'jcg-8',
+    examId: 'jeongcheogi',
+    source: 'youtube',
+    board: '정처기 실기 특강 채널',
+    author: '수강생 합격 후기',
+    title: 'SQL·정규화는 실기 무조건 나온다 (고정 배점)',
+    summary:
+      'SELECT/JOIN/GROUP BY, 제1~3정규형, 이상현상 3종은 거의 매회 출제. 여기만 확실히 잡아도 40점 확보. 반대로 신기술 용어는 범위가 넓어 가성비 낮으니 자주 나온 것만.',
+    upvotes: 2140,
+    comments: 312,
+    tags: ['실기', 'SQL', '정규화'],
+    strategy: {
+      name: '빈출 파트 집중 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 80,
+    },
+  },
+  {
+    id: 'jcg-9',
+    examId: 'jeongcheogi',
+    source: 'instagram',
+    board: '#정처기 #실기합격',
+    author: '@cert.log',
+    title: '필기 합격 후 실기까지 텀 관리 (2개월 공백 주의)',
+    summary:
+      '필기 붙고 실기까지 두 달 놀다가 개념 다 날아감. 필기 끝나자마자 실기 기출 1회분 풀어보고 감 유지, 본격 준비는 시험 4주 전부터. 필기 오답노트가 실기 밑천이 됨.',
+    upvotes: 2765,
+    comments: 118,
+    tags: ['필기후실기', '텀관리', '4주'],
+    strategy: {
+      name: '실기 4주 단기 전략',
+      phaseWeights: { concept: 0.3, past: 0.45, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 75,
+    },
+  },
 
-  // ─── 컴퓨터활용능력 1급 ───
+  // ═══════════ 컴퓨터활용능력 1급 ═══════════
   {
     id: 'ch-1',
     examId: 'comhwal1',
@@ -145,8 +239,98 @@ export const TIPS = [
       recommendedTotalHours: 60,
     },
   },
+  {
+    id: 'ch-4',
+    examId: 'comhwal1',
+    source: 'dcinside',
+    board: '컴활 갤러리',
+    author: 'ㅇㅇ(175.223)',
+    title: '실기 감점 포인트 총정리 — 정답인데 0점 나오는 경우',
+    summary:
+      '값은 맞는데 지시대로 안 하면 0점. 셀 서식(표시형식·소수점), 시트명, 차트 요소 이름까지 문제 문구 그대로 맞춰야 함. 저장 안 하고 넘어가는 실수도 많으니 문제당 저장 습관.',
+    upvotes: 1342,
+    comments: 205,
+    tags: ['실기', '감점방지', '체크리스트'],
+    strategy: {
+      name: '감점 방지 정밀 전략',
+      phaseWeights: { concept: 0.2, past: 0.4, mock: 0.3, wrap: 0.1 },
+      recommendedTotalHours: 55,
+    },
+  },
+  {
+    id: 'ch-5',
+    examId: 'comhwal1',
+    source: 'blog',
+    board: '사무직 자격증 블로그',
+    author: '오피스마스터',
+    title: '액세스가 진짜 복병 — 엑셀만 파다 떨어짐',
+    summary:
+      '1급은 액세스가 발목 잡음. 쿼리(선택·매개변수·크로스탭), 폼/보고서 컨트롤 원본이 핵심. 액세스에 전체 시간의 40%는 배정해야 균형 맞음.',
+    upvotes: 745,
+    comments: 112,
+    tags: ['액세스', '1급', '시간배분'],
+    strategy: {
+      name: '액세스 보강 전략',
+      phaseWeights: { concept: 0.3, past: 0.4, mock: 0.2, wrap: 0.1 },
+      recommendedTotalHours: 65,
+    },
+  },
+  {
+    id: 'ch-6',
+    examId: 'comhwal1',
+    source: 'instagram',
+    board: '#컴활1급 #사무직준비',
+    author: '@office.cert',
+    title: '매크로/VBA 겁먹지 마세요 — 나오는 형태 정해져 있음',
+    summary:
+      '매크로는 기록 후 버튼 연결 패턴, VBA는 폼 열기/닫기·값 넘기기 정도만 반복 출제. 코드 통으로 외우기보다 손으로 5번 쳐보면 시험장에서 그냥 나옴.',
+    upvotes: 3120,
+    comments: 187,
+    tags: ['매크로', 'VBA', '패턴'],
+    strategy: {
+      name: '매크로 패턴 숙달 전략',
+      phaseWeights: { concept: 0.2, past: 0.45, mock: 0.25, wrap: 0.1 },
+      recommendedTotalHours: 50,
+    },
+  },
+  {
+    id: 'ch-7',
+    examId: 'comhwal1',
+    source: 'naver_cafe',
+    board: '컴활 실기 합격방',
+    author: '주부합격러',
+    title: '필기 유효기간 2년 — 실기 미루다 필기 날림',
+    summary:
+      '필기 합격 후 2년 안에 실기 못 붙으면 필기부터 다시. 필기 붙자마자 실기 접수 잡아두고 3주 안에 끝내는 게 정신건강에 이로움. 미루면 진짜 다시 봄.',
+    upvotes: 892,
+    comments: 134,
+    tags: ['필기유효기간', '일정관리', '실기'],
+    strategy: {
+      name: '실기 3주 속성 전략',
+      phaseWeights: { concept: 0.15, past: 0.45, mock: 0.3, wrap: 0.1 },
+      recommendedTotalHours: 45,
+    },
+  },
+  {
+    id: 'ch-8',
+    examId: 'comhwal1',
+    source: 'youtube',
+    board: '컴활 실기 실전 채널',
+    author: '합격 인증 댓글',
+    title: '시험장 컴퓨터 느림 대비 — 시간 배분 리허설',
+    summary:
+      '실기 45분인데 시험장 PC가 느려서 체감 시간이 확 줄어듦. 집에서 연습할 때 40분 타이머로 끝내는 훈련. 어려운 문제는 과감히 넘기고 쉬운 것부터 확보.',
+    upvotes: 1876,
+    comments: 229,
+    tags: ['시간관리', '실전연습', '실기'],
+    strategy: {
+      name: '실전 시간압박 전략',
+      phaseWeights: { concept: 0.15, past: 0.35, mock: 0.4, wrap: 0.1 },
+      recommendedTotalHours: 48,
+    },
+  },
 
-  // ─── 한국사능력검정 ───
+  // ═══════════ 한국사능력검정시험 (심화) ═══════════
   {
     id: 'hk-1',
     examId: 'hanguksa',
@@ -169,7 +353,7 @@ export const TIPS = [
     id: 'hk-2',
     examId: 'hanguksa',
     source: 'youtube',
-    board: '최태성 별별한국사 댓글',
+    board: '한국사 인강 채널 댓글',
     author: '수험생 후기',
     title: '무료 강의 정주행 + 기출 2회독이면 심화 1급 충분',
     summary:
@@ -201,8 +385,98 @@ export const TIPS = [
       recommendedTotalHours: 18,
     },
   },
+  {
+    id: 'hk-4',
+    examId: 'hanguksa',
+    source: 'naver_cafe',
+    board: '공무원 준비 카페',
+    author: '9급준비생',
+    title: '근현대사에서 등급 갈린다 — 전근대는 다 맞음',
+    summary:
+      '심화 떨어지는 사람 대부분 개항기~현대사에서 무너짐. 갑오개혁·독립운동 단체·정부별 사건은 표로 정리해서 반복. 전근대는 기출로도 충분하니 시간 배분을 뒤로 몰아라.',
+    upvotes: 1654,
+    comments: 198,
+    tags: ['근현대사', '등급전략', '심화'],
+    strategy: {
+      name: '근현대사 집중 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 32,
+    },
+  },
+  {
+    id: 'hk-5',
+    examId: 'hanguksa',
+    source: 'blog',
+    board: '한능검 정리 블로그',
+    author: '역사덕후',
+    title: '사료·사진 문제 대비 — 텍스트만 봐서는 못 품',
+    summary:
+      '심화는 사료 제시형이 절반. 자주 나오는 사료(영남만인소, 시무28조 등)는 첫 문장만 봐도 시대 특정되게 훈련. 문화재는 이미지로 기억해야 하니 기출 사진 모아서 폰에 저장.',
+    upvotes: 987,
+    comments: 121,
+    tags: ['사료', '문화재', '이미지암기'],
+    strategy: {
+      name: '사료·이미지 대비 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 28,
+    },
+  },
+  {
+    id: 'hk-6',
+    examId: 'hanguksa',
+    source: 'instagram',
+    board: '#한국사능력검정 #공스타',
+    author: '@daily_hanguksa',
+    title: '왕 순서 암기 노래 + 연표 백지 테스트',
+    summary:
+      '조선 왕 순서는 노래로 외우면 시험장에서 자동 재생됨. 그리고 매일 자기 전 백지에 연표 그리기 5분. 3일만 해도 시대 순서 헷갈림이 사라짐.',
+    upvotes: 6420,
+    comments: 203,
+    tags: ['암기법', '백지테스트', '연표'],
+    strategy: {
+      name: '반복 인출 암기 전략',
+      phaseWeights: { concept: 0.4, past: 0.35, mock: 0.1, wrap: 0.15 },
+      recommendedTotalHours: 26,
+    },
+  },
+  {
+    id: 'hk-7',
+    examId: 'hanguksa',
+    source: 'youtube',
+    board: '한능검 요약 채널',
+    author: '급수 인증 댓글',
+    title: '심화 1급 컷 80점 — 2급만 목표면 전략이 달라진다',
+    summary:
+      '1급(80점)과 2급(70점)은 10점 차이지만 준비량은 1.5배. 가산점만 필요하면 2급 목표로 빈출 위주만 보고 시간 아끼는 것도 전략. 목표 급수 먼저 정하고 시작하세요.',
+    upvotes: 3210,
+    comments: 276,
+    tags: ['급수전략', '1급vs2급', '목표설정'],
+    strategy: {
+      name: '목표 급수 맞춤 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 22,
+    },
+  },
+  {
+    id: 'hk-8',
+    examId: 'hanguksa',
+    source: 'dcinside',
+    board: '한국사 갤러리',
+    author: 'ㅇㅇ(220.94)',
+    title: '시험 당일 OMR 실수 주의 — 50문항 시간은 남는다',
+    summary:
+      '80분에 50문항이라 시간은 넉넉. 다만 헷갈리는 문제 붙잡다 마킹 밀리는 사고 많음. 10문항마다 마킹하고, 모르는 건 일단 찍고 표시 후 나중에 재검토.',
+    upvotes: 534,
+    comments: 68,
+    tags: ['시험당일', 'OMR', '실수방지'],
+    strategy: {
+      name: '실전 리허설 마무리 전략',
+      phaseWeights: { concept: 0.3, past: 0.4, mock: 0.2, wrap: 0.1 },
+      recommendedTotalHours: 24,
+    },
+  },
 
-  // ─── TOEIC ───
+  // ═══════════ TOEIC ═══════════
   {
     id: 'tc-1',
     examId: 'toeic',
@@ -257,8 +531,98 @@ export const TIPS = [
       recommendedTotalHours: 80,
     },
   },
+  {
+    id: 'tc-4',
+    examId: 'toeic',
+    source: 'dcinside',
+    board: '토익 갤러리',
+    author: 'ㅇㅇ(211.234)',
+    title: '600 미만이면 파트5 문법부터 — 문제 더 풀어도 안 오름',
+    summary:
+      '기초 없이 모의고사만 돌리면 점수 정체됨. 품사·시제·수일치 3개만 잡아도 파트5가 반은 풀림. 문법 인강 한 바퀴 돌리고 나서 문제집 들어가는 게 결과적으로 빠름.',
+    upvotes: 1102,
+    comments: 176,
+    tags: ['기초', '문법', '600점대'],
+    strategy: {
+      name: '문법 기초 정립 전략',
+      phaseWeights: { concept: 0.45, past: 0.3, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 100,
+    },
+  },
+  {
+    id: 'tc-5',
+    examId: 'toeic',
+    source: 'blog',
+    board: '어학 자격증 블로그',
+    author: '토익만점러',
+    title: 'LC 파트3·4 선택지 먼저 읽기 (선독) 훈련법',
+    summary:
+      '음성 나오기 전에 문제·선택지를 미리 읽어두면 정답률이 확 오름. 처음엔 안 되니 스크립트 보고 문제 먼저 읽는 연습부터. 디렉션 나오는 시간을 선독에 쓰는 게 핵심.',
+    upvotes: 1420,
+    comments: 158,
+    tags: ['LC', '파트3·4', '선독'],
+    strategy: {
+      name: 'LC 선독 훈련 전략',
+      phaseWeights: { concept: 0.25, past: 0.35, mock: 0.3, wrap: 0.1 },
+      recommendedTotalHours: 90,
+    },
+  },
+  {
+    id: 'tc-6',
+    examId: 'toeic',
+    source: 'naver_cafe',
+    board: '토익 단기반 카페',
+    author: '벼락치기전문',
+    title: '2주 남았을 때 — 빈출 단어 800개만 조지기',
+    summary:
+      '시간 없으면 문법 새로 안 배우고 빈출 단어와 파트7 지문 유형만. 토익 단어는 범위가 좁아서 800개면 체감 커버율이 높음. 하루 100개씩 8일, 나머지는 모의고사.',
+    upvotes: 2340,
+    comments: 291,
+    tags: ['2주단기', '단어', '벼락치기'],
+    strategy: {
+      name: '단기 단어 집중 전략',
+      phaseWeights: { concept: 0.35, past: 0.25, mock: 0.3, wrap: 0.1 },
+      recommendedTotalHours: 40,
+    },
+  },
+  {
+    id: 'tc-7',
+    examId: 'toeic',
+    source: 'instagram',
+    board: '#토익 #파트7',
+    author: '@rc.master',
+    title: '파트7 이중지문·삼중지문 연계문제 푸는 순서',
+    summary:
+      '지문 전체 읽지 말고 문제 먼저 → 키워드 스캔. 연계문제는 두 지문에 걸친 정보(날짜·이름·금액)를 묶는 게 포인트. 이 유형만 따로 20세트 풀면 감이 생김.',
+    upvotes: 4180,
+    comments: 224,
+    tags: ['파트7', '연계문제', '독해'],
+    strategy: {
+      name: '파트7 유형 집중 전략',
+      phaseWeights: { concept: 0.2, past: 0.35, mock: 0.35, wrap: 0.1 },
+      recommendedTotalHours: 85,
+    },
+  },
+  {
+    id: 'tc-8',
+    examId: 'toeic',
+    source: 'youtube',
+    board: '토익 실전 채널',
+    author: '900점 인증 댓글',
+    title: '오답노트는 "왜 틀렸는지" 분류가 전부',
+    summary:
+      '단어 몰라서 / 문법 몰라서 / 시간 없어서 / 실수 — 4가지로 분류하면 내가 뭘 보강할지 바로 보임. 시간 없어서가 많으면 실력이 아니라 속도 훈련이 답.',
+    upvotes: 2760,
+    comments: 315,
+    tags: ['오답노트', '분석', '점수향상'],
+    strategy: {
+      name: '오답 분석 중심 전략',
+      phaseWeights: { concept: 0.2, past: 0.3, mock: 0.3, wrap: 0.2 },
+      recommendedTotalHours: 95,
+    },
+  },
 
-  // ─── SQLD ───
+  // ═══════════ SQLD ═══════════
   {
     id: 'sq-1',
     examId: 'sqld',
@@ -295,8 +659,262 @@ export const TIPS = [
       recommendedTotalHours: 16,
     },
   },
+  {
+    id: 'sq-3',
+    examId: 'sqld',
+    source: 'naver_cafe',
+    board: '데이터자격증 준비 카페',
+    author: '비전공합격',
+    title: '비전공자 3주 — SQL 한 줄도 몰랐는데 붙은 순서',
+    summary:
+      '1주차 SELECT·WHERE·JOIN 기본 문법 인강, 2주차 기출 1회독하며 모르는 것 정리, 3주차 기출 2회독+오답. DB 설치해서 직접 쿼리 쳐보면 이해 속도가 다름.',
+    upvotes: 1210,
+    comments: 168,
+    tags: ['비전공자', '3주', '실습'],
+    strategy: {
+      name: '비전공 실습 병행 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 40,
+    },
+  },
+  {
+    id: 'sq-4',
+    examId: 'sqld',
+    source: 'youtube',
+    board: 'SQLD 강의 채널',
+    author: '합격 인증 댓글',
+    title: '계층형 질의·윈도우 함수가 변별력 문제',
+    summary:
+      'CONNECT BY, ROW_NUMBER/RANK, PARTITION BY는 어렵다고 버리는 사람 많은데 배점 대비 유형이 정해져 있어 가성비 좋음. 각 3~4문제 유형만 익히면 합격선이 편해짐.',
+    upvotes: 1876,
+    comments: 213,
+    tags: ['계층형질의', '윈도우함수', '변별력'],
+    strategy: {
+      name: '고득점 유형 공략 전략',
+      phaseWeights: { concept: 0.3, past: 0.5, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 30,
+    },
+  },
+  {
+    id: 'sq-5',
+    examId: 'sqld',
+    source: 'instagram',
+    board: '#SQLD #데이터자격증',
+    author: '@data.cert.log',
+    title: '1과목 과락 주의 — 10문제 중 4개는 맞아야',
+    summary:
+      '2과목(40문제)에서 아무리 잘해도 1과목 과락이면 탈락. 모델링 이론이 지루해도 이틀은 강제로 배정. 정규화·식별자·관계 파트는 매회 반복 출제.',
+    upvotes: 2450,
+    comments: 142,
+    tags: ['과락방지', '1과목', '모델링'],
+    strategy: {
+      name: '과락 방지 균형 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 28,
+    },
+  },
+  {
+    id: 'sq-6',
+    examId: 'sqld',
+    source: 'dcinside',
+    board: '취업 갤러리',
+    author: 'ㅇㅇ(210.117)',
+    title: 'NULL 처리 문제 매번 나온다 (NVL·COALESCE)',
+    summary:
+      'NULL 연산 결과, 집계함수에서 NULL 무시, NVL/NVL2/COALESCE 차이는 거의 고정 출제. 여기서 헷갈리면 쉬운 점수 놓침. 표로 한 장 정리해서 시험 전날 보기.',
+    upvotes: 823,
+    comments: 97,
+    tags: ['NULL', '빈출', '함수'],
+    strategy: {
+      name: '빈출 함수 정리 전략',
+      phaseWeights: { concept: 0.25, past: 0.55, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 22,
+    },
+  },
+  {
+    id: 'sq-7',
+    examId: 'sqld',
+    source: 'blog',
+    board: '데이터 엔지니어 블로그',
+    author: 'DE준비생',
+    title: 'SQLD 따고 SQLP 갈 사람은 공부법이 다르다',
+    summary:
+      '단순 합격만 목표면 기출 암기로 되지만, SQLP나 실무 연계까지 볼 거면 실행계획·옵티마이저를 이해하며 가야 함. 시간은 1.5배 들지만 나중에 다시 안 봐도 됨.',
+    upvotes: 512,
+    comments: 63,
+    tags: ['SQLP', '실무연계', '심화'],
+    strategy: {
+      name: '심화 이해 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 45,
+    },
+  },
+  {
+    id: 'sq-8',
+    examId: 'sqld',
+    source: 'naver_cafe',
+    board: 'SQLD 벼락치기방',
+    author: '주말합격',
+    title: '주말 이틀 벼락치기 가능? — 조건부 가능',
+    summary:
+      'SQL 경험 있으면 이틀도 됨(기출 2회독). 완전 노베이스면 절대 비추. 토요일 개념+기출 1회독, 일요일 기출 2회독+오답. 대신 시험 직전 회차라 운도 따라야 함.',
+    upvotes: 1345,
+    comments: 231,
+    tags: ['벼락치기', '주말', '경험자'],
+    strategy: {
+      name: '주말 초단기 전략',
+      phaseWeights: { concept: 0.15, past: 0.65, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 16,
+    },
+  },
 
-  // ─── 전기기사 ───
+  // ═══════════ ADsP (데이터분석 준전문가) ═══════════
+  {
+    id: 'ad-1',
+    examId: 'adsp',
+    source: 'dcinside',
+    board: '취업 갤러리',
+    author: 'ㅇㅇ(58.29)',
+    title: 'ADsP 2주 합격 — 3과목(통계)에 시간 다 써라',
+    summary:
+      '1·2과목은 상식+암기라 기출로 커버되는데 3과목 통계·데이터마이닝이 배점도 크고 어려움. 회귀·의사결정나무·군집분석 개념만 잡아도 합격선. 나머지는 기출 반복.',
+    upvotes: 1120,
+    comments: 154,
+    tags: ['2주완성', '3과목집중', '통계'],
+    strategy: {
+      name: '3과목 집중 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 35,
+    },
+  },
+  {
+    id: 'ad-2',
+    examId: 'adsp',
+    source: 'naver_cafe',
+    board: '데이터자격증 준비 카페',
+    author: '문과생합격',
+    title: '문과 비전공 통계 노베이스 후기 (수식 안 외웠음)',
+    summary:
+      '수식 유도는 안 나오고 개념·해석 문제 위주. p-value, 유의수준, 1종/2종 오류는 "무슨 뜻인지" 말로 설명할 수 있으면 충분. 겁먹고 포기하는 게 제일 아까움.',
+    upvotes: 1876,
+    comments: 232,
+    tags: ['비전공', '통계기초', '개념이해'],
+    strategy: {
+      name: '개념 이해 우선 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 45,
+    },
+  },
+  {
+    id: 'ad-3',
+    examId: 'adsp',
+    source: 'youtube',
+    board: 'ADsP 강의 채널',
+    author: '합격 인증 댓글',
+    title: '기출 5회분이면 유형 다 나온다 (문제은행 성향)',
+    summary:
+      '회차별로 비슷한 문제가 표현만 바꿔 반복 출제. 최근 5회 기출 2회독하면 처음 보는 문제가 거의 없음. 단답형이 있으니 용어 철자까지 정확히 외워야 함.',
+    upvotes: 2340,
+    comments: 287,
+    tags: ['기출위주', '단답형', '문제은행'],
+    strategy: {
+      name: '기출 회독 전략',
+      phaseWeights: { concept: 0.25, past: 0.55, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 30,
+    },
+  },
+  {
+    id: 'ad-4',
+    examId: 'adsp',
+    source: 'blog',
+    board: '데이터 분석 입문 블로그',
+    author: '데분준비생',
+    title: '1과목 데이터 이해 — DIKW·DB 용어가 전부',
+    summary:
+      'DIKW 피라미드, 데이터베이스 특징, 빅데이터 3V/5V, 데이터 사이언티스트 역량 같은 정형화된 개념 반복. 여기는 하루면 끝나니 빨리 털고 3과목으로 넘어가는 게 이득.',
+    upvotes: 645,
+    comments: 78,
+    tags: ['1과목', 'DIKW', '빠른정리'],
+    strategy: {
+      name: '앞 과목 속성 처리 전략',
+      phaseWeights: { concept: 0.3, past: 0.5, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 28,
+    },
+  },
+  {
+    id: 'ad-5',
+    examId: 'adsp',
+    source: 'instagram',
+    board: '#ADsP #데이터분석준전문가',
+    author: '@adsp.study',
+    title: '2과목 분석 기획 — CRISP-DM·분석 과제 우선순위',
+    summary:
+      '분석 방법론 단계(CRISP-DM, KDD) 순서 문제와 시급성/난이도 매트릭스가 단골. 순서 암기는 앞글자 따서 외우고, 매트릭스는 사분면 그림으로 기억하면 안 헷갈림.',
+    upvotes: 3120,
+    comments: 165,
+    tags: ['2과목', '분석방법론', '암기법'],
+    strategy: {
+      name: '방법론 암기 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 32,
+    },
+  },
+  {
+    id: 'ad-6',
+    examId: 'adsp',
+    source: 'dcinside',
+    board: '데이터 갤러리',
+    author: 'ㅇㅇ(112.170)',
+    title: 'R 코드 문제 나온다 — 문법 몰라도 되는 수준',
+    summary:
+      '3과목에 R 결과 해석 문제가 섞여 나옴. 코드를 짤 필요는 없고 summary() 출력에서 계수·p값 읽는 정도. 기출에 나온 출력 예시 몇 개만 눈에 익혀두면 됨.',
+    upvotes: 892,
+    comments: 118,
+    tags: ['R', '결과해석', '3과목'],
+    strategy: {
+      name: '출력 해석 훈련 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 34,
+    },
+  },
+  {
+    id: 'ad-7',
+    examId: 'adsp',
+    source: 'naver_cafe',
+    board: '취업 스펙 준비방',
+    author: '스펙쌓기',
+    title: 'ADsP → SQLD 순서로 따면 시너지 (용어 겹침)',
+    summary:
+      '데이터 관련 용어·모델링 개념이 SQLD와 겹쳐서 연달아 준비하면 시간이 절약됨. ADsP 먼저 따고 한 달 안에 SQLD 보는 루트 추천. 취업 서류에도 세트로 쓰기 좋음.',
+    upvotes: 1543,
+    comments: 196,
+    tags: ['자격증루트', 'SQLD연계', '취업'],
+    strategy: {
+      name: '연계 자격 준비 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 38,
+    },
+  },
+  {
+    id: 'ad-8',
+    examId: 'adsp',
+    source: 'youtube',
+    board: 'ADsP 요약 채널',
+    author: '수강생 후기',
+    title: '과락 없음? 아니다 — 과목별 40% 미달 시 탈락',
+    summary:
+      '총점 60점 넘어도 과목별 40% 미만이면 불합격. 3과목 어렵다고 버리면 바로 과락. 1·2과목에서 점수 벌고 3과목은 최소 40%는 확보하는 배분이 안전함.',
+    upvotes: 2010,
+    comments: 244,
+    tags: ['과락', '합격기준', '점수배분'],
+    strategy: {
+      name: '과락 방지 균형 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 36,
+    },
+  },
+
+  // ═══════════ 전기기사 ═══════════
   {
     id: 'jg-1',
     examId: 'jeongi',
@@ -333,8 +951,116 @@ export const TIPS = [
       recommendedTotalHours: 260,
     },
   },
+  {
+    id: 'jg-3',
+    examId: 'jeongi',
+    source: 'dcinside',
+    board: '전기기사 갤러리',
+    author: 'ㅇㅇ(39.117)',
+    title: '필기는 10개년 기출 3회독이 국룰',
+    summary:
+      '전기기사 필기는 기출 반복률이 높아서 10개년 돌리면 절반은 본 문제. 이해 안 되는 건 일단 넘기고 회독수를 쌓아라. 3회독쯤에 갑자기 이해되는 순간이 옴.',
+    upvotes: 1876,
+    comments: 267,
+    tags: ['필기', '10개년', '다회독'],
+    strategy: {
+      name: '기출 다회독 전략',
+      phaseWeights: { concept: 0.3, past: 0.5, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 200,
+    },
+  },
+  {
+    id: 'jg-4',
+    examId: 'jeongi',
+    source: 'blog',
+    board: '전기 실무 블로그',
+    author: '현장전기인',
+    title: '실기가 진짜 산 — 필기 붙고 실기 3수 흔함',
+    summary:
+      '실기는 단답+계산 서술형이라 필기와 결이 완전 다름. 계산 과정 안 쓰면 감점, 단위 빼먹어도 감점. 기출 10개년을 손으로 직접 풀어쓰는 연습만이 답.',
+    upvotes: 1342,
+    comments: 208,
+    tags: ['실기', '서술형', '계산과정'],
+    strategy: {
+      name: '실기 서술 훈련 전략',
+      phaseWeights: { concept: 0.3, past: 0.5, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 280,
+    },
+  },
+  {
+    id: 'jg-5',
+    examId: 'jeongi',
+    source: 'naver_cafe',
+    board: '전기기사 실기 스터디',
+    author: '실기2수합격',
+    title: '실기 배점 큰 파트 — 시퀀스·수변전설비 도면',
+    summary:
+      '단답형만 파고 도면 문제 버리면 60점 못 넘김. 시퀀스 회로 동작 설명, 수변전 단선결선도는 매회 큰 배점으로 나옴. 도면 유형 20개만 외워도 합격권.',
+    upvotes: 987,
+    comments: 156,
+    tags: ['실기', '시퀀스', '도면'],
+    strategy: {
+      name: '실기 도면 집중 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 290,
+    },
+  },
+  {
+    id: 'jg-6',
+    examId: 'jeongi',
+    source: 'youtube',
+    board: '전기기사 실기 채널',
+    author: '합격 인증 댓글',
+    title: '공학용 계산기 세팅 안 하고 가면 시간 날림',
+    summary:
+      '복소수·행렬 계산 되는 계산기로 미리 손에 익혀야 함. 시험장에서 기능 찾다가 시간 다 감. 허용 기종 확인은 필수(공고 확인). 계산기 숙달만으로 10분은 벌음.',
+    upvotes: 1654,
+    comments: 189,
+    tags: ['계산기', '실기', '시험준비물'],
+    strategy: {
+      name: '실전 도구 숙달 전략',
+      phaseWeights: { concept: 0.3, past: 0.45, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 250,
+    },
+  },
+  {
+    id: 'jg-7',
+    examId: 'jeongi',
+    source: 'instagram',
+    board: '#전기기사 #전기공부',
+    author: '@electric.pass',
+    title: '자기학 포기해도 되나? — 조건부 가능',
+    summary:
+      '전기자기학이 제일 어렵고 배점은 같음. 다른 4과목에서 60점 이상 나오면 자기학 40점만 맞춰 과락만 면하는 전략도 실전에선 유효. 대신 실기에서 다시 만남.',
+    upvotes: 2430,
+    comments: 198,
+    tags: ['전기자기학', '과락', '선택과집중'],
+    strategy: {
+      name: '선택과 집중 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 220,
+    },
+  },
+  {
+    id: 'jg-8',
+    examId: 'jeongi',
+    source: 'dcinside',
+    board: '전기기사 갤러리',
+    author: 'ㅇㅇ(106.101)',
+    title: 'KEC 개정 반영 안 된 책으로 공부하면 낭패',
+    summary:
+      '전기설비기술기준(법규)은 개정이 잦아서 옛날 교재로 하면 틀린 걸 외우게 됨. 최신 개정판 확인하고, 법규는 시험 직전 2주에 몰아서 암기하는 게 효율적.',
+    upvotes: 743,
+    comments: 124,
+    tags: ['법규', 'KEC개정', '교재선택'],
+    strategy: {
+      name: '법규 막판 암기 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.05, wrap: 0.15 },
+      recommendedTotalHours: 230,
+    },
+  },
 
-  // ─── 산업안전기사 ───
+  // ═══════════ 산업안전기사 ═══════════
   {
     id: 'sa-1',
     examId: 'sananjeon',
@@ -371,8 +1097,116 @@ export const TIPS = [
       recommendedTotalHours: 80,
     },
   },
+  {
+    id: 'sa-3',
+    examId: 'sananjeon',
+    source: 'naver_cafe',
+    board: '안전관리자 준비방',
+    author: '안전관리신입',
+    title: '작업형 동영상 — 유형별 위험요인 3개씩 외우기',
+    summary:
+      '동영상 보여주고 위험요인·안전대책 쓰는 문제. 나오는 작업(고소작업, 밀폐공간, 지게차, 크레인 등)이 정해져 있어서 유형별로 3개씩 준비하면 대부분 커버.',
+    upvotes: 1543,
+    comments: 187,
+    tags: ['작업형', '동영상', '위험요인'],
+    strategy: {
+      name: '작업형 유형 대비 전략',
+      phaseWeights: { concept: 0.3, past: 0.45, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 85,
+    },
+  },
+  {
+    id: 'sa-4',
+    examId: 'sananjeon',
+    source: 'youtube',
+    board: '산업안전 강의 채널',
+    author: '합격 인증 댓글',
+    title: '6과목이라 겁먹는데 실제론 겹치는 내용 많음',
+    summary:
+      '안전보건교육·인간공학·기계·전기·화학·건설 6과목인데 법령과 재해예방 원칙이 여러 과목에 반복 등장. 중복 개념부터 잡으면 체감 분량이 확 줄어듦.',
+    upvotes: 2103,
+    comments: 245,
+    tags: ['6과목', '중복개념', '효율'],
+    strategy: {
+      name: '중복 개념 통합 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 75,
+    },
+  },
+  {
+    id: 'sa-5',
+    examId: 'sananjeon',
+    source: 'blog',
+    board: '안전관리 실무 블로그',
+    author: '현직안전관리자',
+    title: '계산문제 15개 공식 리스트 (재해율·신뢰도)',
+    summary:
+      '도수율·강도율·연천인율, 신뢰도 직렬/병렬, FT도 계산은 매회 고정 출제. 공식 15개를 A4 한 장에 정리해서 매일 아침 훑으면 계산문제는 다 맞을 수 있음.',
+    upvotes: 876,
+    comments: 103,
+    tags: ['계산문제', '공식정리', '재해율'],
+    strategy: {
+      name: '계산 공식 확보 전략',
+      phaseWeights: { concept: 0.3, past: 0.5, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 72,
+    },
+  },
+  {
+    id: 'sa-6',
+    examId: 'sananjeon',
+    source: 'dcinside',
+    board: '기사 자격증 갤러리',
+    author: 'ㅇㅇ(223.62)',
+    title: '비전공자도 되는 이유 — 이해보다 암기 비중이 큼',
+    summary:
+      '기계·전기·화학 배경 없어도 됨. 원리를 깊게 묻지 않고 "안전 기준이 뭐냐"를 물어서 암기로 커버 가능. 대신 절대량이 많으니 4주 이상은 잡아야 함.',
+    upvotes: 1432,
+    comments: 196,
+    tags: ['비전공자', '암기', '4주'],
+    strategy: {
+      name: '비전공 암기 중심 전략',
+      phaseWeights: { concept: 0.3, past: 0.5, mock: 0.05, wrap: 0.15 },
+      recommendedTotalHours: 78,
+    },
+  },
+  {
+    id: 'sa-7',
+    examId: 'sananjeon',
+    source: 'naver_cafe',
+    board: '산업안전기사 실기방',
+    author: '실기재수생',
+    title: '실기 답안 작성 — 개수 맞춰 쓰기 (4가지 쓰라면 4개)',
+    summary:
+      '"3가지 쓰시오"인데 5개 쓰면 앞 3개만 채점되고 틀리면 감점. 정확히 요구 개수만, 확실한 것부터. 글씨 못 알아보면 0점이니 또박또박 쓰는 연습도 필요.',
+    upvotes: 1198,
+    comments: 174,
+    tags: ['실기', '답안작성', '감점방지'],
+    strategy: {
+      name: '실기 답안 정밀 전략',
+      phaseWeights: { concept: 0.3, past: 0.45, mock: 0.1, wrap: 0.15 },
+      recommendedTotalHours: 82,
+    },
+  },
+  {
+    id: 'sa-8',
+    examId: 'sananjeon',
+    source: 'instagram',
+    board: '#산업안전기사 #취업준비',
+    author: '@safety.daily',
+    title: '건설안전기사와 같이 준비하면 시간 절약',
+    summary:
+      '두 자격증이 법령·재해예방 파트가 상당 부분 겹침. 산안기 준비하면서 건설안전기사 기출도 같이 보면 추가 시간 30%로 하나 더 딸 수 있음. 안전 분야 취업엔 세트가 유리.',
+    upvotes: 3450,
+    comments: 212,
+    tags: ['동시준비', '건설안전기사', '취업'],
+    strategy: {
+      name: '유사 자격 병행 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 90,
+    },
+  },
 
-  // ─── 공인중개사 ───
+  // ═══════════ 공인중개사 ═══════════
   {
     id: 'gi-1',
     examId: 'gongin',
@@ -409,8 +1243,116 @@ export const TIPS = [
       recommendedTotalHours: 700,
     },
   },
+  {
+    id: 'gi-3',
+    examId: 'gongin',
+    source: 'dcinside',
+    board: '부동산 갤러리',
+    author: 'ㅇㅇ(211.36)',
+    title: '1차만 먼저 붙는 분할 전략 (직장인 현실론)',
+    summary:
+      '직장인이 동차는 사실상 무리. 1차(학개론·민법) 먼저 붙고 다음 해 2차 하는 게 합격률 높음. 1차 합격은 다음 회차까지 유효하니 부담도 덜함.',
+    upvotes: 1876,
+    comments: 298,
+    tags: ['분할합격', '직장인', '1차우선'],
+    strategy: {
+      name: '1차 선합격 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 350,
+    },
+  },
+  {
+    id: 'gi-4',
+    examId: 'gongin',
+    source: 'blog',
+    board: '공인중개사 수험 블로그',
+    author: '중개사도전기',
+    title: '민법 판례 — 사례형에 강해지는 법',
+    summary:
+      '조문 암기만으론 사례 문제를 못 품. 판례를 "누가 누구에게 뭘 주장했고 법원이 어떻게 판단"으로 스토리화해서 정리. 기출에 나온 판례 200개면 충분.',
+    upvotes: 1234,
+    comments: 176,
+    tags: ['민법', '판례', '사례형'],
+    strategy: {
+      name: '민법 판례 정리 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 620,
+    },
+  },
+  {
+    id: 'gi-5',
+    examId: 'gongin',
+    source: 'naver_cafe',
+    board: '공인중개사 2차 스터디',
+    author: '2차합격',
+    title: '2차 공법이 최대 난관 — 버리지 말고 40점만',
+    summary:
+      '부동산공법은 양이 방대해 완벽은 불가능. 도시계획·개발행위 등 빈출 단원만 확실히 하고 나머진 과감히 스킵. 과락(40점)만 면하고 다른 과목에서 점수 확보.',
+    upvotes: 2145,
+    comments: 334,
+    tags: ['부동산공법', '과락방지', '2차'],
+    strategy: {
+      name: '공법 과락 회피 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 650,
+    },
+  },
+  {
+    id: 'gi-6',
+    examId: 'gongin',
+    source: 'instagram',
+    board: '#공인중개사 #중개사시험',
+    author: '@realty.cert',
+    title: '세법·공시법은 계산 유형만 반복하면 점수 나옴',
+    summary:
+      '부동산세법은 취득세·재산세·양도세 계산 유형이 정해져 있음. 세율표 외우고 계산 흐름 5개 유형만 반복하면 안정적으로 득점. 암기 부담 대비 가성비 최고 과목.',
+    upvotes: 2876,
+    comments: 189,
+    tags: ['세법', '공시법', '계산유형'],
+    strategy: {
+      name: '세법 계산 반복 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 630,
+    },
+  },
+  {
+    id: 'gi-7',
+    examId: 'gongin',
+    source: 'youtube',
+    board: '공인중개사 특강 채널',
+    author: '수강생 후기',
+    title: '실전 모의고사 시간 배분 — 100분에 40문항',
+    summary:
+      '과목당 100분/40문항이라 문제당 2.5분. 모르는 문제 붙잡으면 뒤 문제를 못 봄. 1차부터 시간 재고 푸는 훈련 필수. 마킹 시간 5분은 반드시 남겨두기.',
+    upvotes: 1654,
+    comments: 223,
+    tags: ['시간배분', '모의고사', '실전'],
+    strategy: {
+      name: '실전 시간관리 전략',
+      phaseWeights: { concept: 0.35, past: 0.35, mock: 0.2, wrap: 0.1 },
+      recommendedTotalHours: 660,
+    },
+  },
+  {
+    id: 'gi-8',
+    examId: 'gongin',
+    source: 'dcinside',
+    board: '부동산 갤러리',
+    author: 'ㅇㅇ(175.198)',
+    title: '학개론 계산문제 5문제 — 포기하면 손해',
+    summary:
+      '부동산학개론 계산(화폐의 시간가치, LTV/DTI, 수익환원법)은 유형이 좁아서 며칠만 투자하면 다 맞음. 문과라고 겁먹고 버리는 사람 많은데 제일 확실한 5점.',
+    upvotes: 923,
+    comments: 141,
+    tags: ['학개론', '계산문제', '1차'],
+    strategy: {
+      name: '학개론 계산 확보 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 610,
+    },
+  },
 
-  // ─── 사회복지사 ───
+  // ═══════════ 사회복지사 1급 ═══════════
   {
     id: 'sb-1',
     examId: 'sahoebokji',
@@ -429,8 +1371,116 @@ export const TIPS = [
       recommendedTotalHours: 100,
     },
   },
+  {
+    id: 'sb-2',
+    examId: 'sahoebokji',
+    source: 'dcinside',
+    board: '사회복지 갤러리',
+    author: 'ㅇㅇ(121.145)',
+    title: '조사론이 과락 1순위 — 통계 무서워도 유형은 좁다',
+    summary:
+      '사회복지조사론에서 과락 나는 사람이 제일 많음. 척도 종류, 신뢰도/타당도, 표본추출 방법만 확실히 하면 40점은 확보. 통계 수식은 거의 안 나오니 개념 위주로.',
+    upvotes: 1120,
+    comments: 167,
+    tags: ['조사론', '과락방지', '통계'],
+    strategy: {
+      name: '조사론 과락 회피 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 110,
+    },
+  },
+  {
+    id: 'sb-3',
+    examId: 'sahoebokji',
+    source: 'youtube',
+    board: '사회복지사 강의 채널',
+    author: '합격 인증 댓글',
+    title: '8과목 3교시 구성 — 교시별 전략이 다르다',
+    summary:
+      '1교시(기초)가 제일 어렵고 3교시(법제)가 암기. 1교시에서 무너지면 멘탈이 나가니 여기에 시간을 가장 많이. 법제는 시험 직전 벼락치기가 오히려 효율적.',
+    upvotes: 1876,
+    comments: 234,
+    tags: ['8과목', '교시별전략', '시간배분'],
+    strategy: {
+      name: '교시별 배분 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 120,
+    },
+  },
+  {
+    id: 'sb-4',
+    examId: 'sahoebokji',
+    source: 'blog',
+    board: '사회복지 수험 블로그',
+    author: '복지사준비',
+    title: '인간행동과 사회환경 — 학자별 이론 표로 정리',
+    summary:
+      '프로이트·에릭슨·피아제 발달단계가 매회 출제. 학자별 단계·핵심개념을 한 표에 정리해서 비교하면 헷갈림이 사라짐. 이 표 하나로 5~7문제는 확보.',
+    upvotes: 745,
+    comments: 98,
+    tags: ['인간행동', '발달이론', '비교정리'],
+    strategy: {
+      name: '이론 비교 정리 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 115,
+    },
+  },
+  {
+    id: 'sb-5',
+    examId: 'sahoebokji',
+    source: 'instagram',
+    board: '#사회복지사1급 #복지사시험',
+    author: '@welfare.study',
+    title: '기출 5개년이면 충분 — 그 이전은 법 개정으로 무용',
+    summary:
+      '오래된 기출은 개정 전 법령 기준이라 오히려 헷갈림. 최근 5개년만 3회독하고, 법제론은 반드시 올해 개정 반영본으로. 카페에 매년 개정사항 정리글이 올라옴.',
+    upvotes: 2340,
+    comments: 156,
+    tags: ['기출범위', '법개정', '5개년'],
+    strategy: {
+      name: '최신 기출 집중 전략',
+      phaseWeights: { concept: 0.35, past: 0.45, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 105,
+    },
+  },
+  {
+    id: 'sb-6',
+    examId: 'sahoebokji',
+    source: 'naver_cafe',
+    board: '사회복지사 스터디 모집방',
+    author: '스터디장',
+    title: '직장 다니며 6개월 — 하루 2시간 현실 플랜',
+    summary:
+      '현장 일하면서 준비하는 사람이 대부분. 평일 2시간(인강 1개+문제), 주말 5시간(복습+기출). 6개월이면 8과목 2회독 가능. 무리하게 3개월 잡으면 중도 포기함.',
+    upvotes: 1432,
+    comments: 201,
+    tags: ['직장병행', '6개월', '현실플랜'],
+    strategy: {
+      name: '직장 병행 장기 전략',
+      phaseWeights: { concept: 0.4, past: 0.4, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 130,
+    },
+  },
+  {
+    id: 'sb-7',
+    examId: 'sahoebokji',
+    source: 'youtube',
+    board: '사회복지사 요약 채널',
+    author: '수강생 후기',
+    title: '실천기술론 — 사례 적용 문제가 늘고 있다',
+    summary:
+      '단순 암기형에서 "이 상황에 맞는 개입기술은?" 사례형으로 출제 경향 변화. 기술 이름만 외우지 말고 어떤 상황에 쓰는지 예시와 묶어서 기억해야 함.',
+    upvotes: 1654,
+    comments: 187,
+    tags: ['실천기술론', '사례형', '출제경향'],
+    strategy: {
+      name: '사례 적용 대비 전략',
+      phaseWeights: { concept: 0.45, past: 0.35, mock: 0.1, wrap: 0.1 },
+      recommendedTotalHours: 118,
+    },
+  },
 
-  // ─── 지게차 ───
+  // ═══════════ 지게차운전기능사 ═══════════
   {
     id: 'jgc-1',
     examId: 'jigyecha',
@@ -449,26 +1499,112 @@ export const TIPS = [
       recommendedTotalHours: 10,
     },
   },
-];
-
-// 시험별 팁이 없을 때 보여줄 범용 꿀팁
-export const GENERIC_TIPS = [
   {
-    id: 'gen-1',
-    examId: '*',
-    source: 'blog',
-    board: '공부법 블로그',
-    author: '메타인지연구소',
-    title: '어떤 시험이든 통하는 3단계: 개념 훑기 → 기출 회독 → 실전 리허설',
+    id: 'jgc-2',
+    examId: 'jigyecha',
+    source: 'youtube',
+    board: '지게차 실기 채널',
+    author: '합격 인증 댓글',
+    title: '실기 코스 — 화물 적재 후 전진·후진 동선 외우기',
     summary:
-      '개념은 완벽히 이해하려 하지 말고 전체 지도를 그린다는 느낌으로 빠르게. 기출로 출제 포인트를 역산하고, 마지막엔 실제 시험 시간에 맞춰 리허설.',
-    upvotes: 1500,
-    comments: 120,
-    tags: ['공부법', '범용'],
+      '주어진 시간(2분 30초) 안에 화물을 들고 코스를 돌아 정확히 내려놓아야 함. 조작보다 동선 순서를 통째로 외우는 게 먼저. 유튜브 1인칭 영상 10번 보면 머리에 그려짐.',
+    upvotes: 3420,
+    comments: 276,
+    tags: ['실기', '코스', '동선암기'],
     strategy: {
-      name: '표준 3단계 전략',
-      phaseWeights: { concept: 0.3, past: 0.4, mock: 0.2, wrap: 0.1 },
-      recommendedTotalHours: 60,
+      name: '실기 동선 숙달 전략',
+      phaseWeights: { concept: 0.15, past: 0.4, mock: 0.35, wrap: 0.1 },
+      recommendedTotalHours: 14,
+    },
+  },
+  {
+    id: 'jgc-3',
+    examId: 'jigyecha',
+    source: 'naver_cafe',
+    board: '중장비 자격증 카페',
+    author: '취업준비중',
+    title: '실기 실격 사유 정리 — 이것만 피하면 붙는다',
+    summary:
+      '화물 낙하, 코스 라인 접촉, 시간 초과가 3대 실격 사유. 속도 욕심내지 말고 천천히 정확하게. 포크 높이 유지(지면 20~30cm)만 지켜도 낙하 위험이 확 줄어듦.',
+    upvotes: 1210,
+    comments: 154,
+    tags: ['실기', '실격사유', '주의사항'],
+    strategy: {
+      name: '실격 방지 전략',
+      phaseWeights: { concept: 0.15, past: 0.35, mock: 0.4, wrap: 0.1 },
+      recommendedTotalHours: 12,
+    },
+  },
+  {
+    id: 'jgc-4',
+    examId: 'jigyecha',
+    source: 'blog',
+    board: '중장비 취업 블로그',
+    author: '물류현장',
+    title: '필기 과목 — 안전관리에서 절반 나온다',
+    summary:
+      '장비구조·작업방법·안전관리 중 안전관리 비중이 큼. 기출앱 돌릴 때 안전관리 문제부터 정복하면 합격선이 빨리 보임. 60점만 넘으면 되니 어려운 건 버려도 됨.',
+    upvotes: 432,
+    comments: 61,
+    tags: ['필기', '안전관리', '합격선'],
+    strategy: {
+      name: '필기 빈출 우선 전략',
+      phaseWeights: { concept: 0.15, past: 0.6, mock: 0.15, wrap: 0.1 },
+      recommendedTotalHours: 9,
+    },
+  },
+  {
+    id: 'jgc-5',
+    examId: 'jigyecha',
+    source: 'instagram',
+    board: '#지게차운전기능사 #자격증',
+    author: '@heavy.license',
+    title: '학원 vs 독학 — 실기는 학원이 압도적으로 유리',
+    summary:
+      '필기는 독학으로 충분한데 실기는 실차 연습 없이 불가능. 6~10시간 연수 받으면 대부분 한 번에 붙음. 학원비 아끼려다 재응시하면 오히려 손해.',
+    upvotes: 2140,
+    comments: 198,
+    tags: ['학원', '실기연수', '비용'],
+    strategy: {
+      name: '실기 연수 집중 전략',
+      phaseWeights: { concept: 0.1, past: 0.35, mock: 0.45, wrap: 0.1 },
+      recommendedTotalHours: 13,
+    },
+  },
+  {
+    id: 'jgc-6',
+    examId: 'jigyecha',
+    source: 'dcinside',
+    board: '중장비 갤러리',
+    author: 'ㅇㅇ(211.246)',
+    title: '상시시험이라 일정 잡기 쉬움 — 필기 붙고 바로 실기 접수',
+    summary:
+      '상시로 자주 열려서 필기 합격 후 바로 실기 일정 잡을 수 있음. 감 떨어지기 전에 2~3주 안에 실기 보는 게 좋음. 인기 지역은 자리가 빨리 차니 접수 서두르기.',
+    upvotes: 678,
+    comments: 92,
+    tags: ['상시시험', '일정관리', '접수'],
+    strategy: {
+      name: '빠른 연계 응시 전략',
+      phaseWeights: { concept: 0.15, past: 0.45, mock: 0.3, wrap: 0.1 },
+      recommendedTotalHours: 11,
+    },
+  },
+  {
+    id: 'jgc-7',
+    examId: 'jigyecha',
+    source: 'youtube',
+    board: '지게차 자격증 채널',
+    author: '취업 후기 댓글',
+    title: '3톤 미만 vs 기능사 — 취업하려면 기능사',
+    summary:
+      '3톤 미만은 교육 이수만으로 되지만 현장에선 기능사를 요구하는 곳이 많음. 물류·제조 취업 목적이면 처음부터 기능사로 가는 게 시간 절약.',
+    upvotes: 1876,
+    comments: 213,
+    tags: ['취업', '자격구분', '기능사'],
+    strategy: {
+      name: '취업 목표 준비 전략',
+      phaseWeights: { concept: 0.15, past: 0.5, mock: 0.25, wrap: 0.1 },
+      recommendedTotalHours: 12,
     },
   },
 ];

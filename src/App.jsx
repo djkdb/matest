@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getExam } from './data/exams.js';
-import { TIPS, GENERIC_TIPS } from './data/tips.js';
+import { TIPS } from './data/tips.js';
 import { generatePlan, replanFromToday } from './lib/planner.js';
 import { loadState, saveState, clearState } from './lib/storage.js';
 import { todayKey, diffDays } from './lib/date.js';
@@ -108,7 +108,7 @@ export default function App() {
   const exam = useMemo(() => (state.examId ? getExam(state.examId) : null), [state.examId]);
 
   const selectedTips = useMemo(
-    () => [...TIPS, ...GENERIC_TIPS].filter((t) => state.selectedTipIds.includes(t.id)),
+    () => TIPS.filter((t) => state.selectedTipIds.includes(t.id)),
     [state.selectedTipIds]
   );
 

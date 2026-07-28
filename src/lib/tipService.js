@@ -4,12 +4,11 @@
 // 크롤러 백엔드 API 호출(fetch(`/api/tips?exam=${examId}`))로 교체하면 된다.
 // UI는 이 모듈의 반환 형태에만 의존한다.
 
-import { TIPS, GENERIC_TIPS } from '../data/tips.js';
+import { TIPS } from '../data/tips.js';
 
 export async function fetchTips(examId) {
   // 실제 수집 API를 흉내 내는 약간의 지연
   await new Promise((r) => setTimeout(r, 350));
-  const specific = TIPS.filter((t) => t.examId === examId);
-  const list = specific.length > 0 ? specific : [];
-  return [...list, ...GENERIC_TIPS].sort((a, b) => b.upvotes - a.upvotes);
+  // 해당 시험의 팁만 반환한다. 시험과 무관한 범용 공부법 글은 노이즈라 넣지 않는다.
+  return TIPS.filter((t) => t.examId === examId).sort((a, b) => b.upvotes - a.upvotes);
 }
